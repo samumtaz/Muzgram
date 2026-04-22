@@ -57,7 +57,7 @@ export default function ForOrganizersPage() {
               Fill Your Events with the Right Crowd
             </h1>
             <p className="text-text-secondary text-lg max-w-xl mx-auto mb-8">
-              Muzgram is where young Muslims find events near them. List your event and get in front of thousands of active community members.
+              Muzgram is where the community finds events near them. List your event and get in front of thousands of active members.
             </p>
             <a
               href="https://apps.apple.com/app/muzgram/id0000000000"

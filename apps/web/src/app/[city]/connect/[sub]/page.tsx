@@ -53,7 +53,7 @@ export async function generateMetadata({
   ]);
   if (!cityRow || !subRow) return {};
   const title = `${subRow.name} in ${cityRow.name} | Muzgram`;
-  const description = `Find halal ${subRow.name.toLowerCase()} in ${cityRow.name}. Muslim-verified listings on Muzgram.`;
+  const description = `Find ${subRow.name.toLowerCase()} in ${cityRow.name}. Community-verified listings on Muzgram.`;
   return {
     title, description,
     alternates: { canonical: `https://muzgram.com/${city}/connect/${sub}` },
@@ -117,7 +117,7 @@ export default async function ConnectSubcategoryPage({
             {subData.name} in {cityData.name}
           </h1>
           <p className="text-text-secondary text-lg">
-            Halal {subData.name.toLowerCase()} in {cityData.name} — Muslim-verified listings.
+            {subData.name} in {cityData.name} — community-verified listings.
           </p>
         </div>
 

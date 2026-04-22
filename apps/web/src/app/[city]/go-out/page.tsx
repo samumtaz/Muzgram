@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
   );
   if (!cityRow) return {};
   const title = categoryTitle('go_out', cityRow.name);
-  const description = `Muslim events, Eid celebrations, and halal nightlife in ${cityRow.name}. Upcoming events near you. Download Muzgram.`;
+  const description = `Upcoming events, Eid celebrations, and community gatherings in ${cityRow.name}. Download Muzgram.`;
   return {
     title,
     description,
@@ -88,7 +88,7 @@ export default async function GoOutCategoryPage({ params }: { params: Promise<{ 
             Muslim Events in {cityData.name}
           </h1>
           <p className="text-text-secondary text-lg max-w-2xl">
-            Upcoming Eid celebrations, halal events, community gatherings, and Muslim nightlife in {cityData.name}.
+            Upcoming events, Eid celebrations, and community gatherings in {cityData.name}.
           </p>
           <div className="flex gap-4 mt-3 text-sm text-text-muted">
             <span>{events.length} upcoming</span>
@@ -115,7 +115,7 @@ export default async function GoOutCategoryPage({ params }: { params: Promise<{ 
 
         <section className="mt-16 text-center">
           <p className="text-text-secondary mb-4">
-            Never miss a Muslim event — get notified on the Muzgram app.
+            Never miss an event — get notified on the Muzgram app.
           </p>
           <div className="flex gap-3 justify-center">
             <a

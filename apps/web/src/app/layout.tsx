@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: '%s | Muzgram',
   },
   description:
-    'Discover halal restaurants, Muslim events, and community services near you. The social ecosystem for young Muslims in Chicago.',
+    'Discover halal restaurants, events, and community services near you. Where your community eats, goes out, and connects.',
   keywords: ['halal', 'Muslim', 'Chicago', 'restaurant', 'events', 'community'],
   openGraph: {
     type: 'website',

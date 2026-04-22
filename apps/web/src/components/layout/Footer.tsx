@@ -18,7 +18,7 @@ export function Footer() {
               Muzgram
             </Link>
             <p className="text-text-muted text-sm mt-1">
-              The social ecosystem for young Muslims.
+              Where your community eats, goes out, and connects.
             </p>
           </div>
 

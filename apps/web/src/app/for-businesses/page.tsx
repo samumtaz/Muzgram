@@ -100,7 +100,7 @@ export default function ForBusinessesPage() {
               Reach Muslims in Your City
             </h1>
             <p className="text-text-secondary text-lg max-w-xl mx-auto mb-8">
-              Muzgram is where young Muslims discover halal restaurants, services, and events.
+              Muzgram is where the community discovers restaurants, services, and events.
               Get your business in front of the right audience.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">

@@ -11,7 +11,7 @@ import { InstallCTA } from '@/components/conversion/InstallCTA';
 export const metadata: Metadata = {
   title: 'Muzgram — Halal Spots, Events & Services for Muslims',
   description:
-    'Find halal restaurants, Muslim events, and community services near you. The social ecosystem for young Muslims.',
+    'Find halal restaurants, events, and community services near you. Where your community eats, goes out, and connects.',
   alternates: { canonical: 'https://muzgram.com' },
 };
 
@@ -71,8 +71,7 @@ export default async function HomePage() {
               <span className="text-brand-gold">&amp; Services</span> Near You
             </h1>
             <p className="text-text-secondary text-lg mb-8">
-              The social ecosystem for young Muslims. Discover where your community eats,
-              goes out, and connects.
+              Discover where your community eats, goes out, and connects.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a

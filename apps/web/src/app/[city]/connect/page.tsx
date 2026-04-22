@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
   );
   if (!cityRow) return {};
   const title = categoryTitle('connect', cityRow.name);
-  const description = `Muslim community services, Islamic schools, halal photographers, and business professionals in ${cityRow.name}. Download Muzgram.`;
+  const description = `Community services, schools, photographers, and business professionals in ${cityRow.name}. Download Muzgram.`;
   return {
     title,
     description,
@@ -90,7 +90,7 @@ export default async function ConnectCategoryPage({ params }: { params: Promise<
             Muslim Services in {cityData.name}
           </h1>
           <p className="text-text-secondary text-lg max-w-2xl">
-            Find Muslim-owned businesses, community services, Islamic schools, halal photographers, and professional services in {cityData.name}.
+            Find community services, schools, photographers, and professional services in {cityData.name}.
           </p>
           <div className="flex gap-4 mt-3 text-sm text-text-muted">
             <span>{listings.length} services</span>
