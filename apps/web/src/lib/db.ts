@@ -6,9 +6,9 @@ import { cache } from 'react';
 const pool = new Pool({
   connectionString: process.env.DATABASE_READ_URL,
   ssl: { rejectUnauthorized: false },
-  max: 10,
-  idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 5_000,
+  max: 3,
+  idleTimeoutMillis: 10_000,
+  connectionTimeoutMillis: 8_000,
 });
 
 // React cache() deduplicates identical queries within a single RSC render tree
