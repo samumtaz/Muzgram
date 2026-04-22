@@ -57,11 +57,7 @@ export async function generateMetadata({
     `seo:city:${city}`,
     3600,
     () => query<CityRow>(
-      `SELECT id, slug, name,
-              COALESCE(listing_count, 0) AS listing_count,
-              COALESCE(event_count, 0) AS event_count,
-              NULL::text AS meta_title,
-              NULL::text AS meta_description
+      `SELECT id, slug, name, listing_count, event_count, meta_title, meta_description
        FROM cities WHERE slug = $1 AND launch_status = 'active' LIMIT 1`,
       [city],
     ).then((rows) => rows[0] ?? null),
@@ -96,8 +92,7 @@ export default async function CityHubPage({
 
   const [cityRows, topListings, upcomingEvents, clusterCities] = await Promise.all([
     query<CityRow>(
-      `SELECT id, slug, name, listing_count, event_count,
-              NULL::text AS seo_description
+      `SELECT id, slug, name, seo_description, listing_count, event_count
        FROM cities WHERE slug = $1 AND launch_status = 'active' LIMIT 1`,
       [city],
     ),
