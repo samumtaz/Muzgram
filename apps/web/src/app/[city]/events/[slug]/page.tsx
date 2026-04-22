@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound, redirect, RedirectType } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { query } from '@/lib/db';
 import { withCache } from '@/lib/cache/redis';
@@ -127,7 +127,7 @@ export default async function EventDetailPage({
        WHERE e.slug = $1 AND e.is_active = true LIMIT 1`,
       [slug],
     );
-    if (moved[0]) redirect(`/${moved[0].city_slug}/events/${moved[0].slug}`, RedirectType.permanent);
+    if (moved[0]) permanentRedirect(`/${moved[0].city_slug}/events/${moved[0].slug}`);
     notFound();
   }
 

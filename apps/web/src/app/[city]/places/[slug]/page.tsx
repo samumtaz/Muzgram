@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound, redirect, RedirectType } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { query } from '@/lib/db';
 import { withCache } from '@/lib/cache/redis';
@@ -130,7 +130,7 @@ export default async function BusinessDetailPage({
       [slug],
     );
     if (moved[0]) {
-      redirect(`/${moved[0].city_slug}/places/${moved[0].slug}`, RedirectType.permanent);
+      permanentRedirect(`/${moved[0].city_slug}/places/${moved[0].slug}`);
     }
     notFound();
   }
