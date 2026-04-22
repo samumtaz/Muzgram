@@ -95,6 +95,19 @@ export default async function HomePage() {
   return (
     <>
       <Header />
+
+      {/* ── MARQUEE TICKER — pinned just below nav ── */}
+      <div
+        className="relative py-3 overflow-hidden border-b border-surface-border"
+        style={{ background: '#0f0f0f' }}
+      >
+        <div className="flex animate-marquee whitespace-nowrap select-none">
+          <span className="text-text-muted text-xs font-medium tracking-widest uppercase">
+            {tickerText}&nbsp;&nbsp;·&nbsp;&nbsp;{tickerText}
+          </span>
+        </div>
+      </div>
+
       <main className="overflow-x-hidden">
 
         {/* ─────────────────────────────────────────────────────────────────
@@ -224,186 +237,274 @@ export default async function HomePage() {
             {/* RIGHT — Phone mockup */}
             <div className="flex justify-center lg:justify-end relative">
 
-              {/* Outer glow ring */}
+              {/* Deep glow behind phone */}
               <div
-                className="absolute animate-glow-pulse rounded-full"
+                className="absolute animate-glow-pulse pointer-events-none"
                 style={{
-                  width: 340, height: 680,
-                  background: 'radial-gradient(ellipse, rgba(212,168,83,0.20) 0%, transparent 70%)',
+                  width: 420, height: 750,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(ellipse, rgba(212,168,83,0.22) 0%, transparent 65%)',
                   top: '50%', left: '50%',
                   transform: 'translate(-50%,-50%)',
-                  filter: 'blur(20px)',
+                  filter: 'blur(48px)',
                 }}
               />
 
-              {/* Phone wrapper with float animation */}
-              <div className="animate-float relative" style={{ transformOrigin: 'center center' }}>
+              {/* Phone wrapper — float animation */}
+              <div className="animate-float relative" style={{ transformOrigin: 'center bottom' }}>
 
-                {/* Phone shell */}
-                <div
-                  className="relative overflow-hidden"
-                  style={{
-                    width: 300, borderRadius: 48,
-                    background: '#111111',
-                    border: '10px solid #1e1e1e',
-                    boxShadow: '0 0 0 1px #2a2a2a, 0 60px 100px rgba(0,0,0,0.9), inset 0 0 0 1px #333, 0 0 60px rgba(212,168,83,0.08)',
-                  }}
-                >
-                  {/* Dynamic Island */}
-                  <div className="flex justify-center pt-4 pb-2">
-                    <div
-                      className="flex items-center gap-2 px-4 h-7 rounded-full"
-                      style={{ background: '#000', minWidth: 120 }}
-                    >
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#111' }} />
-                      <div className="flex-1 h-1.5 rounded-full" style={{ background: '#1a1a1a' }} />
-                      <div className="w-2 h-2 rounded-full border" style={{ borderColor: '#333', background: '#111' }} />
-                    </div>
-                  </div>
+                {/* ── iPhone 17 Pro Max ── */}
+                <div className="relative" style={{ width: 320 }}>
 
-                  {/* App screen */}
-                  <div className="bg-[#0D0D0D] px-3.5 pb-8 space-y-3">
-                    {/* Status bar */}
-                    <div className="flex items-center justify-between px-1 pb-1 text-[10px] text-text-muted">
-                      <span>9:41</span>
-                      <div className="flex items-center gap-1">
-                        <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.237 4.237 0 0 0-6 0zm-4-4 2 2a7.074 7.074 0 0 1 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
-                      </div>
-                    </div>
+                  {/* Hardware buttons — LEFT side */}
+                  {/* Action Button */}
+                  <div
+                    className="absolute rounded-full"
+                    style={{
+                      width: 8, height: 36,
+                      background: 'linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #3a3a3a 100%)',
+                      left: -7, top: 108,
+                      boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.6)',
+                    }}
+                  />
+                  {/* Volume Up */}
+                  <div
+                    className="absolute rounded-full"
+                    style={{
+                      width: 7, height: 58,
+                      background: 'linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #3a3a3a 100%)',
+                      left: -6, top: 162,
+                      boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.6)',
+                    }}
+                  />
+                  {/* Volume Down */}
+                  <div
+                    className="absolute rounded-full"
+                    style={{
+                      width: 7, height: 58,
+                      background: 'linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #3a3a3a 100%)',
+                      left: -6, top: 230,
+                      boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.6)',
+                    }}
+                  />
 
-                    {/* App header */}
-                    <div className="flex items-center justify-between py-1">
-                      <span className="text-brand-gold font-bold text-xl tracking-tight">Muzgram</span>
-                      <div className="flex gap-2">
-                        <div className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-sm">🔔</div>
-                        <div className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-sm">👤</div>
-                      </div>
-                    </div>
+                  {/* Hardware buttons — RIGHT side (Power) */}
+                  <div
+                    className="absolute rounded-full"
+                    style={{
+                      width: 7, height: 80,
+                      background: 'linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #3a3a3a 100%)',
+                      right: -6, top: 175,
+                      boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.08), 1px 0 3px rgba(0,0,0,0.6)',
+                    }}
+                  />
 
-                    {/* Location row */}
-                    <div className="flex items-center gap-2 bg-surface rounded-xl px-3 py-2">
-                      <span className="text-brand-gold text-sm">📍</span>
-                      <span className="text-text-secondary text-xs font-medium">Chicago, IL</span>
-                      <span className="ml-auto text-text-muted text-xs">▼</span>
-                    </div>
+                  {/* Titanium frame */}
+                  <div
+                    className="absolute inset-0 rounded-[52px] pointer-events-none"
+                    style={{
+                      background: 'transparent',
+                      border: '3px solid transparent',
+                      backgroundClip: 'padding-box',
+                      boxShadow: `
+                        0 0 0 3px #3d3d3d,
+                        0 0 0 4px #1a1a1a,
+                        inset 0 1px 0 rgba(255,255,255,0.12),
+                        0 60px 120px rgba(0,0,0,0.95),
+                        0 0 80px rgba(212,168,83,0.10)
+                      `,
+                      zIndex: 10,
+                    }}
+                  />
 
-                    {/* Featured event */}
-                    <div className="relative rounded-2xl overflow-hidden">
+                  {/* Phone body */}
+                  <div
+                    className="relative overflow-hidden"
+                    style={{
+                      borderRadius: 50,
+                      background: 'linear-gradient(160deg, #1c1c1e 0%, #111 60%, #0d0d0d 100%)',
+                      border: '3px solid #3a3a3a',
+                    }}
+                  >
+                    {/* Screen top padding + Dynamic Island */}
+                    <div className="bg-[#000] pt-3 pb-0 flex justify-center">
+                      {/* Dynamic Island — pill shape with camera/sensor */}
                       <div
-                        className="h-36 flex flex-col items-center justify-center"
+                        className="flex items-center justify-center gap-2.5 px-4"
                         style={{
-                          background: 'linear-gradient(135deg, rgba(212,168,83,0.25) 0%, rgba(180,60,30,0.3) 100%)',
+                          height: 34,
+                          minWidth: 126,
+                          background: '#000',
+                          borderRadius: 20,
+                          border: '1px solid #1a1a1a',
                         }}
                       >
-                        <div className="text-4xl mb-1">🎉</div>
-                        <div className="text-brand-gold text-[10px] font-bold uppercase tracking-wider">Featured Event</div>
-                      </div>
-                      <div className="p-3 bg-surface-elevated">
-                        <div className="text-brand-gold text-[9px] font-bold uppercase tracking-wide">Fri, May 2 · 7:00 PM</div>
-                        <div className="text-text-primary text-xs font-semibold mt-0.5 leading-tight">Eid Celebration Night — Chicago</div>
-                        <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-text-muted text-[9px]">Navy Pier</span>
-                          <span className="text-emerald-400 text-[9px] font-bold bg-emerald-900/30 px-1.5 py-0.5 rounded-full">Free</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Section header */}
-                    <div className="flex items-center justify-between px-0.5">
-                      <span className="text-text-primary text-xs font-bold">Nearby Spots</span>
-                      <span className="text-brand-gold text-[10px]">See all →</span>
-                    </div>
-
-                    {/* Spot cards row */}
-                    <div className="flex gap-2">
-                      {[
-                        { emoji: '🥗', name: 'The Halal Guys', hood: 'Devon Ave' },
-                        { emoji: '🍖', name: 'Shawarma Palace', hood: 'Rogers Park' },
-                        { emoji: '☕', name: 'Gold Brew', hood: 'Wicker Park' },
-                      ].map((s, i) => (
+                        {/* Front camera dot */}
                         <div
-                          key={i}
-                          className="flex-1 rounded-xl overflow-hidden"
-                          style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
-                        >
-                          <div
-                            className="h-14 flex items-center justify-center text-xl"
-                            style={{
-                              background: ['rgba(34,197,94,0.1)', 'rgba(249,115,22,0.1)', 'rgba(212,168,83,0.1)'][i],
-                            }}
-                          >
-                            {s.emoji}
-                          </div>
-                          <div className="p-1.5">
-                            <div className="text-text-primary text-[8px] font-semibold leading-tight truncate">{s.name}</div>
-                            <div className="text-text-muted text-[7px] mt-0.5">{s.hood}</div>
-                          </div>
-                        </div>
-                      ))}
+                          className="rounded-full"
+                          style={{ width: 12, height: 12, background: '#0a0a0a', border: '1px solid #222', boxShadow: 'inset 0 0 4px rgba(0,120,255,0.15)' }}
+                        />
+                        {/* Face ID sensor area */}
+                        <div style={{ width: 3, height: 3, borderRadius: '50%', background: '#1a1a1a' }} />
+                      </div>
                     </div>
 
-                    {/* Tab bar */}
+                    {/* Screen content */}
                     <div
-                      className="flex justify-around items-center pt-3 mt-2 border-t"
-                      style={{ borderColor: '#2a2a2a' }}
+                      className="bg-[#0D0D0D] px-4 pb-8 pt-2 space-y-3"
+                      style={{ minHeight: 560 }}
                     >
-                      {[
-                        { icon: '⌂', active: true },
-                        { icon: '🗺', active: false },
-                        { icon: '＋', active: false, special: true },
-                        { icon: '🔔', active: false },
-                        { icon: '👤', active: false },
-                      ].map((tab, i) => (
-                        <div
-                          key={i}
-                          className={`flex flex-col items-center text-lg ${tab.special ? 'bg-brand-gold rounded-full w-9 h-9 flex items-center justify-center text-text-inverse' : ''} ${!tab.special && tab.active ? 'opacity-100' : !tab.special ? 'opacity-25' : ''}`}
-                        >
-                          {tab.icon}
+                      {/* Status bar */}
+                      <div className="flex items-center justify-between px-1 text-[10px] font-semibold" style={{ color: '#888' }}>
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1.5">
+                          {/* Signal bars */}
+                          <div className="flex items-end gap-0.5 h-3">
+                            {[3, 5, 7, 9].map((h, i) => (
+                              <div key={i} style={{ width: 3, height: h, background: i < 3 ? '#888' : '#444', borderRadius: 1 }} />
+                            ))}
+                          </div>
+                          {/* WiFi */}
+                          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.237 4.237 0 0 0-6 0zm-4-4 2 2a7.074 7.074 0 0 1 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                          {/* Battery */}
+                          <div className="flex items-center gap-0.5">
+                            <div style={{ width: 22, height: 11, borderRadius: 3, border: '1px solid #666', padding: 1.5 }}>
+                              <div style={{ width: '80%', height: '100%', background: '#888', borderRadius: 1 }} />
+                            </div>
+                            <div style={{ width: 2, height: 5, background: '#666', borderRadius: 1 }} />
+                          </div>
                         </div>
-                      ))}
+                      </div>
+
+                      {/* App header */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-brand-gold font-bold text-xl tracking-tight">Muzgram</span>
+                        <div className="flex gap-1.5">
+                          <div className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-sm">🔔</div>
+                          <div className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-sm">👤</div>
+                        </div>
+                      </div>
+
+                      {/* Location pill */}
+                      <div
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl"
+                        style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
+                      >
+                        <span className="text-brand-gold text-sm">📍</span>
+                        <span className="text-text-secondary text-xs font-medium">Chicago, IL</span>
+                        <span className="ml-auto text-text-muted text-[10px]">▼</span>
+                      </div>
+
+                      {/* Featured event card */}
+                      <div className="relative rounded-2xl overflow-hidden">
+                        <div
+                          className="h-[130px] flex flex-col items-center justify-center gap-1"
+                          style={{ background: 'linear-gradient(135deg, rgba(212,168,83,0.22) 0%, rgba(160,50,20,0.28) 100%)' }}
+                        >
+                          <div className="text-4xl">🎉</div>
+                          <div className="text-brand-gold text-[9px] font-bold uppercase tracking-widest">Featured Event</div>
+                        </div>
+                        <div className="p-3" style={{ background: '#1a1a1a' }}>
+                          <div className="text-brand-gold text-[9px] font-bold uppercase tracking-wide">Fri, May 2 · 7:00 PM</div>
+                          <div className="text-text-primary text-xs font-semibold mt-0.5 leading-tight">Eid Celebration Night</div>
+                          <div className="flex items-center justify-between mt-1.5">
+                            <span className="text-text-muted text-[9px]">Navy Pier · Chicago</span>
+                            <span className="text-emerald-400 text-[9px] font-bold bg-emerald-900/40 px-2 py-0.5 rounded-full">Free</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Nearby spots */}
+                      <div className="flex items-center justify-between px-0.5">
+                        <span className="text-text-primary text-xs font-bold">Nearby Spots</span>
+                        <span className="text-brand-gold text-[9px]">See all →</span>
+                      </div>
+                      <div className="flex gap-2">
+                        {[
+                          { emoji: '🥗', name: 'The Halal Guys', hood: 'Devon Ave', color: 'rgba(34,197,94,0.12)' },
+                          { emoji: '🍖', name: 'Shawarma Palace', hood: 'Rogers Park', color: 'rgba(249,115,22,0.12)' },
+                          { emoji: '☕', name: 'Gold Brew', hood: 'Wicker Park', color: 'rgba(212,168,83,0.12)' },
+                        ].map((s, i) => (
+                          <div key={i} className="flex-1 rounded-xl overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #252525' }}>
+                            <div className="h-14 flex items-center justify-center text-xl" style={{ background: s.color }}>{s.emoji}</div>
+                            <div className="p-1.5">
+                              <div className="text-text-primary text-[8px] font-semibold leading-tight truncate">{s.name}</div>
+                              <div className="text-text-muted text-[7px] mt-0.5">{s.hood}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Tab bar */}
+                      <div className="flex justify-around items-end pt-4 mt-1" style={{ borderTop: '1px solid #1e1e1e' }}>
+                        {[
+                          { icon: '⌂', label: 'Home', active: true },
+                          { icon: '🗺', label: 'Map', active: false },
+                          { icon: '＋', label: '', active: false, special: true },
+                          { icon: '🔔', label: 'Alerts', active: false },
+                          { icon: '👤', label: 'Me', active: false },
+                        ].map((tab, i) => (
+                          <div key={i} className="flex flex-col items-center gap-0.5">
+                            {tab.special ? (
+                              <div className="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-text-inverse font-bold text-lg shadow-lg" style={{ boxShadow: '0 0 16px rgba(212,168,83,0.5)' }}>
+                                {tab.icon}
+                              </div>
+                            ) : (
+                              <>
+                                <span className={`text-base ${tab.active ? 'opacity-100' : 'opacity-30'}`}>{tab.icon}</span>
+                                <span className={`text-[7px] ${tab.active ? 'text-brand-gold' : 'text-text-muted'}`}>{tab.label}</span>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Home indicator bar */}
+                      <div className="flex justify-center pt-1">
+                        <div className="w-28 h-1 rounded-full" style={{ background: '#333' }} />
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Floating toast — right */}
                 <div
-                  className="absolute -right-4 top-24 animate-toast-in-right rounded-2xl px-3 py-2.5 shadow-2xl text-xs min-w-[140px]"
+                  className="absolute -right-8 top-28 animate-toast-in-right rounded-2xl px-3.5 py-3 text-xs min-w-[152px]"
                   style={{
-                    background: 'rgba(30,30,30,0.95)',
-                    border: '1px solid rgba(212,168,83,0.3)',
-                    backdropFilter: 'blur(12px)',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
-                    animationDelay: '0.8s',
+                    background: 'rgba(25,25,25,0.96)',
+                    border: '1px solid rgba(212,168,83,0.35)',
+                    backdropFilter: 'blur(16px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212,168,83,0.08)',
+                    animationDelay: '0.9s',
                     opacity: 0,
                   }}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">🎉</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl">🎉</span>
                     <div>
-                      <div className="text-text-primary font-bold leading-tight">New event nearby</div>
-                      <div className="text-text-muted mt-0.5">Tonight · 0.4 mi away</div>
+                      <div className="text-text-primary font-bold text-[11px] leading-tight">New event nearby</div>
+                      <div className="text-text-muted text-[10px] mt-0.5">Tonight · 0.4 mi away</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Floating toast — left */}
                 <div
-                  className="absolute -left-6 bottom-32 animate-toast-in-left rounded-2xl px-3 py-2.5 shadow-2xl text-xs min-w-[130px]"
+                  className="absolute -left-10 bottom-36 animate-toast-in-left rounded-2xl px-3.5 py-3 text-xs min-w-[140px]"
                   style={{
-                    background: 'rgba(30,30,30,0.95)',
-                    border: '1px solid rgba(212,168,83,0.2)',
-                    backdropFilter: 'blur(12px)',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
-                    animationDelay: '1.4s',
+                    background: 'rgba(25,25,25,0.96)',
+                    border: '1px solid rgba(212,168,83,0.25)',
+                    backdropFilter: 'blur(16px)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.8)',
+                    animationDelay: '1.5s',
                     opacity: 0,
                   }}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">⭐</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl">⭐</span>
                     <div>
-                      <div className="text-brand-gold font-bold leading-tight">#1 in Chicago</div>
-                      <div className="text-text-muted mt-0.5">432 saves</div>
+                      <div className="text-brand-gold font-bold text-[11px] leading-tight">#1 in Chicago</div>
+                      <div className="text-text-muted text-[10px] mt-0.5">432 community saves</div>
                     </div>
                   </div>
                 </div>
@@ -417,17 +518,6 @@ export default async function HomePage() {
         </section>
 
 
-        {/* ─────────────────────────────────────────────────────────────────
-            MARQUEE TICKER
-        ───────────────────────────────────────────────────────────────── */}
-        <div
-          className="relative py-4 overflow-hidden border-y border-surface-border"
-          style={{ background: '#111' }}
-        >
-          <div className="flex animate-marquee whitespace-nowrap gap-0 select-none">
-            <span className="text-text-muted text-sm font-medium tracking-wide pr-0">{tickerText}&nbsp;&nbsp;·&nbsp;&nbsp;{tickerText}</span>
-          </div>
-        </div>
 
 
         {/* ─────────────────────────────────────────────────────────────────
