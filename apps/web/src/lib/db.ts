@@ -4,7 +4,7 @@ import { cache } from 'react';
 // Read-only Supabase direct connection — no PgBouncer (RSCs hold connections)
 // Docs/25 §1.2: separate read-only role, max 10 connections
 const pool = new Pool({
-  connectionString: process.env.DATABASE_READ_URL,
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
   max: 3,
   idleTimeoutMillis: 10_000,
