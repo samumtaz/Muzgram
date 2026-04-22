@@ -16,9 +16,9 @@ export const dynamicParams = true;
 
 interface CityRow { id: string; slug: string; name: string; }
 interface EventRow {
-  id: string; slug: string; title: string; start_time: string;
-  end_time: string | null; venue_name: string | null; address: string | null;
-  cover_image_url: string | null; is_free: boolean; price_cents: number | null;
+  id: string; slug: string; title: string; start_at: string;
+  end_at: string | null; venue_name: string | null; address: string | null;
+  cover_photo_url: string | null; is_free: boolean; price_cents: number | null;
   organizer_name: string | null; city_slug: string;
 }
 
@@ -54,16 +54,16 @@ export default async function TonightPage({ params }: { params: Promise<{ city: 
   const [cityRows, events] = await Promise.all([
     query<CityRow>(`SELECT id, slug, name FROM cities WHERE slug = $1 AND launch_status = 'active' LIMIT 1`, [city]),
     query<EventRow>(`
-      SELECT e.id, e.slug, e.title, e.start_time, e.end_time,
-             e.venue_name, e.address, e.cover_image_url, e.is_free,
+      SELECT e.id, e.slug, e.title, e.start_at, e.end_at,
+             e.venue_name, e.address, e.cover_photo_url, e.is_free,
              e.price_cents, e.organizer_name, c.slug AS city_slug
       FROM events e
       JOIN cities c ON e.city_id = c.id
       WHERE c.slug = $1
         AND e.is_active = true
-        AND e.start_time >= $2
-        AND e.start_time <= $3
-      ORDER BY e.start_time ASC
+        AND e.start_at >= $2
+        AND e.start_at <= $3
+      ORDER BY e.start_at ASC
       LIMIT 40
     `, [city, todayStart.toISOString(), todayEnd.toISOString()]),
   ]);
@@ -118,9 +118,9 @@ export default async function TonightPage({ params }: { params: Promise<{ city: 
                 href={`/${city}/events/${e.slug}`}
                 className="block bg-surface-secondary rounded-xl overflow-hidden hover:ring-1 hover:ring-brand-gold transition-all"
               >
-                {e.cover_image_url && (
+                {e.cover_photo_url && (
                   <img
-                    src={e.cover_image_url}
+                    src={e.cover_photo_url}
                     alt={e.title}
                     className="w-full h-40 object-cover"
                     loading="lazy"
@@ -128,8 +128,8 @@ export default async function TonightPage({ params }: { params: Promise<{ city: 
                 )}
                 <div className="p-4">
                   <div className="text-brand-gold text-xs font-semibold uppercase tracking-wide mb-1">
-                    {fmt.format(new Date(e.start_time))}
-                    {e.end_time ? ` – ${fmt.format(new Date(e.end_time))}` : ''}
+                    {fmt.format(new Date(e.start_at))}
+                    {e.end_at ? ` – ${fmt.format(new Date(e.end_at))}` : ''}
                   </div>
                   <h2 className="font-semibold text-text-primary text-base leading-snug mb-1 line-clamp-2">
                     {e.title}
