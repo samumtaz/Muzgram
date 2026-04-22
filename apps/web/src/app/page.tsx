@@ -40,7 +40,7 @@ export default async function HomePage() {
         AND l.is_active = true
       ORDER BY l.is_featured DESC, l.save_count DESC
       LIMIT 6
-    `),
+    `).catch(() => [] as ListingRow[]),
     query<EventRow>(`
       SELECT e.id, e.slug, e.title, e.start_at, e.cover_photo_url,
              e.price_cents, e.is_featured,
@@ -53,7 +53,7 @@ export default async function HomePage() {
         AND e.start_at > NOW()
       ORDER BY e.is_featured DESC, e.start_at ASC
       LIMIT 4
-    `),
+    `).catch(() => [] as EventRow[]),
   ]);
 
   return (
