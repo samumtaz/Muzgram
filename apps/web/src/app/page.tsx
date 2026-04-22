@@ -100,7 +100,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             HERO
         ───────────────────────────────────────────────────────────────── */}
-        <section className="relative min-h-screen flex flex-col bg-background overflow-hidden">
+        <section className="relative h-screen bg-background overflow-hidden">
 
           {/* Aurora blobs */}
           <div className="pointer-events-none absolute inset-0">
@@ -144,7 +144,7 @@ export default async function HomePage() {
             }}
           />
 
-          <div className="relative flex-1 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-16 items-center py-10 pt-14">
+          <div className="absolute inset-0 bottom-10 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-16 items-center py-10 pt-14">
 
             {/* LEFT — copy */}
             <div className="text-center lg:text-left">
@@ -500,10 +500,10 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Ticker strip — anchored to bottom of hero, fully in viewport */}
+          {/* Ticker — absolutely pinned to bottom of viewport */}
           <div
-            className="relative overflow-hidden border-t border-surface-border py-3"
-            style={{ background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(8px)' }}
+            className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-surface-border py-3 z-10"
+            style={{ background: 'rgba(10,10,10,0.90)', backdropFilter: 'blur(8px)' }}
           >
             <div className="flex animate-marquee whitespace-nowrap select-none">
               <span className="text-text-muted text-xs font-medium tracking-widest uppercase">
