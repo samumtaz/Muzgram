@@ -95,25 +95,12 @@ export default async function HomePage() {
   return (
     <>
       <Header />
-
-      {/* ── MARQUEE TICKER — pinned just below nav ── */}
-      <div
-        className="relative py-3 overflow-hidden border-b border-surface-border"
-        style={{ background: '#0f0f0f' }}
-      >
-        <div className="flex animate-marquee whitespace-nowrap select-none">
-          <span className="text-text-muted text-xs font-medium tracking-widest uppercase">
-            {tickerText}&nbsp;&nbsp;·&nbsp;&nbsp;{tickerText}
-          </span>
-        </div>
-      </div>
-
       <main className="overflow-x-hidden">
 
         {/* ─────────────────────────────────────────────────────────────────
             HERO
         ───────────────────────────────────────────────────────────────── */}
-        <section className="relative min-h-screen flex items-center bg-background overflow-hidden">
+        <section className="relative min-h-screen flex flex-col bg-background overflow-hidden">
 
           {/* Aurora blobs */}
           <div className="pointer-events-none absolute inset-0">
@@ -157,7 +144,7 @@ export default async function HomePage() {
             }}
           />
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-16 items-center py-24">
+          <div className="relative flex-1 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-16 items-center py-10 pt-14">
 
             {/* LEFT — copy */}
             <div className="text-center lg:text-left">
@@ -513,8 +500,17 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Bottom fade-out */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+          {/* Ticker strip — anchored to bottom of hero, fully in viewport */}
+          <div
+            className="relative overflow-hidden border-t border-surface-border py-3"
+            style={{ background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(8px)' }}
+          >
+            <div className="flex animate-marquee whitespace-nowrap select-none">
+              <span className="text-text-muted text-xs font-medium tracking-widest uppercase">
+                {tickerText}&nbsp;&nbsp;·&nbsp;&nbsp;{tickerText}
+              </span>
+            </div>
+          </div>
         </section>
 
 
