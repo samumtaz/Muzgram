@@ -46,7 +46,7 @@ export async function generateStaticParams() {
     WHERE e.is_active = true AND e.slug IS NOT NULL AND c.launch_status = 'active'
     ORDER BY e.start_at DESC
     LIMIT 5000
-  `);
+  `).catch(() => [] as { city: string; slug: string }[]);
   return rows;
 }
 
