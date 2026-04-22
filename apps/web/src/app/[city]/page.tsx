@@ -213,7 +213,7 @@ export default async function CityHubPage({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {topListings.map((listing, i) => (
-                <ListingCard key={listing.id} {...listing} priority={i < 3} />
+                <ListingCard key={listing.id} {...listing} citySlug={listing.city_slug} priority={i < 3} />
               ))}
             </div>
           </section>
