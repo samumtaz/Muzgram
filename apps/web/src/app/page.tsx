@@ -100,7 +100,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             HERO
         ───────────────────────────────────────────────────────────────── */}
-        <section className="relative h-screen bg-background overflow-hidden">
+        <section className="relative h-[100dvh] bg-background overflow-hidden flex flex-col">
 
           {/* Aurora blobs */}
           <div className="pointer-events-none absolute inset-0">
@@ -123,19 +123,9 @@ export default async function HomePage() {
                 animationDelay: '-5s',
               }}
             />
-            <div
-              className="absolute animate-aurora"
-              style={{
-                width: 350, height: 350, borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(232,200,126,0.08) 0%, transparent 65%)',
-                top: '30%', left: '30%',
-                animationDuration: '18s',
-                animationDelay: '-9s',
-              }}
-            />
           </div>
 
-          {/* Grid texture overlay */}
+          {/* Grid texture */}
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.025]"
             style={{
@@ -144,7 +134,8 @@ export default async function HomePage() {
             }}
           />
 
-          <div className="absolute inset-0 bottom-10 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-16 items-center py-10 pt-14">
+          {/* Content — flex-1 so it fills all space above the ticker */}
+          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-8 items-center py-8 overflow-hidden">
 
             {/* LEFT — copy */}
             <div className="text-center lg:text-left">
@@ -164,7 +155,7 @@ export default async function HomePage() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-5xl sm:text-6xl xl:text-7xl font-bold leading-[1.05] mb-6 text-text-primary">
+              <h1 className="text-4xl sm:text-5xl xl:text-6xl font-bold leading-[1.05] mb-4 text-text-primary">
                 Your city.{' '}
                 <span
                   className="block"
@@ -182,13 +173,13 @@ export default async function HomePage() {
                 Your community.
               </h1>
 
-              <p className="text-text-secondary text-lg sm:text-xl leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
+              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-6 max-w-lg mx-auto lg:mx-0">
                 The spots your crew actually goes to. The events worth leaving the house for.
                 Built for your community, finally.
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-12">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6">
                 <a
                   href="https://apps.apple.com/app/muzgram/id0000000000?utm_source=web&utm_medium=hero"
                   className="group relative flex items-center justify-center gap-3 font-bold px-7 py-4 rounded-pill text-text-inverse overflow-hidden"
@@ -221,8 +212,8 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT — Phone mockup */}
-            <div className="flex justify-center lg:justify-end relative">
+            {/* RIGHT — Phone mockup (hidden on mobile) */}
+            <div className="hidden lg:flex justify-end relative">
 
               {/* Deep glow behind phone */}
               <div
@@ -500,9 +491,9 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Ticker — absolutely pinned to bottom of viewport */}
+          {/* Ticker — sits naturally at bottom because section is flex-col */}
           <div
-            className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-surface-border py-3 z-10"
+            className="relative overflow-hidden border-t border-surface-border py-3 flex-shrink-0 z-10"
             style={{ background: 'rgba(10,10,10,0.90)', backdropFilter: 'blur(8px)' }}
           >
             <div className="flex animate-marquee whitespace-nowrap select-none">
