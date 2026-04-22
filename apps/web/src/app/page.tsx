@@ -260,7 +260,7 @@ export default async function HomePage() {
               <div
                 className="absolute animate-glow-pulse pointer-events-none"
                 style={{
-                  width: 420, height: 750,
+                  width: 320, height: 600,
                   borderRadius: '50%',
                   background: 'radial-gradient(ellipse, rgba(212,168,83,0.22) 0%, transparent 65%)',
                   top: '50%', left: '50%',
@@ -273,7 +273,7 @@ export default async function HomePage() {
               <div className="animate-float relative" style={{ transformOrigin: 'center bottom' }}>
 
                 {/* ── iPhone 17 Pro Max ── */}
-                <div className="relative" style={{ width: 320 }}>
+                <div className="relative" style={{ width: 270 }}>
 
                   {/* Hardware buttons — LEFT side */}
                   {/* Action Button */}
@@ -371,7 +371,7 @@ export default async function HomePage() {
                     {/* Screen content */}
                     <div
                       className="bg-[#0D0D0D] px-4 pb-8 pt-2 space-y-3"
-                      style={{ minHeight: 560 }}
+                      style={{ minHeight: 460 }}
                     >
                       {/* Status bar */}
                       <div className="flex items-center justify-between px-1 text-[10px] font-semibold" style={{ color: '#888' }}>
@@ -417,7 +417,7 @@ export default async function HomePage() {
                       {/* Featured event card */}
                       <div className="relative rounded-2xl overflow-hidden">
                         <div
-                          className="h-[130px] flex flex-col items-center justify-center gap-1"
+                          className="h-[100px] flex flex-col items-center justify-center gap-1"
                           style={{ background: 'linear-gradient(135deg, rgba(212,168,83,0.22) 0%, rgba(160,50,20,0.28) 100%)' }}
                         >
                           <div className="text-4xl">🎉</div>
@@ -445,7 +445,7 @@ export default async function HomePage() {
                           { emoji: '☕', name: 'Gold Brew', hood: 'Wicker Park', color: 'rgba(212,168,83,0.12)' },
                         ].map((s, i) => (
                           <div key={i} className="flex-1 rounded-xl overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #252525' }}>
-                            <div className="h-14 flex items-center justify-center text-xl" style={{ background: s.color }}>{s.emoji}</div>
+                            <div className="h-10 flex items-center justify-center text-lg" style={{ background: s.color }}>{s.emoji}</div>
                             <div className="p-1.5">
                               <div className="text-text-primary text-[8px] font-semibold leading-tight truncate">{s.name}</div>
                               <div className="text-text-muted text-[7px] mt-0.5">{s.hood}</div>
