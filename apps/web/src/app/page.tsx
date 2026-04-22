@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { query } from '@/lib/db';
-import { Header } from '@/components/layout/Header';
+import { HomepageHeader } from '@/components/layout/HomepageHeader';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
@@ -94,7 +94,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header />
+      <HomepageHeader />
       <main className="overflow-x-hidden">
 
         {/* ─────────────────────────────────────────────────────────────────
