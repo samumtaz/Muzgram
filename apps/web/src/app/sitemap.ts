@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         AND c.launch_status = 'active'
       ORDER BY l.save_count DESC
       LIMIT 50000
-    `),
+    `).catch(() => [] as ListingSlug[]),
     query<EventSlug>(`
       SELECT e.slug, c.slug AS city_slug, e.updated_at
       FROM events e
@@ -42,11 +42,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         AND e.slug IS NOT NULL
         AND c.launch_status = 'active'
         AND e.start_at > NOW() - INTERVAL '7 days'
-    `),
+    `).catch(() => [] as EventSlug[]),
     query<CitySlug>(`
       SELECT slug, updated_at FROM cities
       WHERE launch_status = 'active'
-    `),
+    `).catch(() => [] as CitySlug[]),
   ]);
 
   const staticUrls: MetadataRoute.Sitemap = [
