@@ -1,5 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 
+import { SnakeNamingStrategy } from './snake-naming.strategy';
 import { CityEntity } from './entities/city.entity';
 import { CommunityPostEntity } from './entities/community-post.entity';
 import { DailySpecialEntity } from './entities/daily-special.entity';
@@ -40,6 +41,7 @@ export const dataSourceOptions: DataSourceOptions = {
     AuditLogEntity,
   ],
   migrations: ['dist/apps/api/src/database/migrations/*.js'],
+  namingStrategy: new SnakeNamingStrategy(),
   ssl: { rejectUnauthorized: false },
   logging: process.env.NODE_ENV === 'development',
 };
