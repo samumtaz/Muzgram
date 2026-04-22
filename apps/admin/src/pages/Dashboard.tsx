@@ -2,15 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { adminApi } from '../lib/api';
 
-interface DashboardStats {
-  activeListings: number;
-  pendingListings: number;
-  upcomingEvents: number;
-  activePosts: number;
-  totalUsers: number;
-  pendingModeration: number;
-}
-
 function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
   return (
     <div style={{ backgroundColor: '#1A1A1A', border: '1px solid #2A2A2A', borderRadius: 12, padding: 20 }}>

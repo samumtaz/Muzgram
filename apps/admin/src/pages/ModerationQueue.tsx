@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { ContentType, ListingStatus, EventStatus, PostStatus } from '@muzgram/types';
+import { ContentType } from '@muzgram/types';
 
 import { adminApi } from '../lib/api';
 
@@ -9,21 +9,6 @@ interface PendingContent {
   events: any[];
   posts: any[];
 }
-
-const statusStyle = (status: string) => ({
-  padding: '2px 8px',
-  borderRadius: 4,
-  fontSize: 12,
-  backgroundColor:
-    status === 'pending' ? '#A0700020' :
-    status === 'active' ? '#2ECC7120' :
-    '#E74C3C20',
-  color:
-    status === 'pending' ? '#D4A853' :
-    status === 'active' ? '#2ECC71' :
-    '#E74C3C',
-  border: `1px solid currentColor`,
-});
 
 export function ModerationQueuePage() {
   const queryClient = useQueryClient();
