@@ -15,6 +15,7 @@ import { SaveEntity } from './entities/save.entity';
 import { UserEntity } from './entities/user.entity';
 import { PaymentEntity } from '../modules/billing/entities/payment.entity';
 import { SubscriptionEntity } from '../modules/billing/entities/subscription.entity';
+import { AuditLogEntity } from './entities/audit-log.entity';
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
@@ -36,6 +37,7 @@ export const dataSourceOptions: DataSourceOptions = {
     ReportEntity,
     SubscriptionEntity,
     PaymentEntity,
+    AuditLogEntity,
   ],
   migrations: ['dist/apps/api/src/database/migrations/*.js'],
   ssl: { rejectUnauthorized: false },

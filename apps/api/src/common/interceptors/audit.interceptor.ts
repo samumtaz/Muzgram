@@ -8,9 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable, tap } from 'rxjs';
 
-import { DataSource } from 'typeorm';
-
 import { UserEntity } from '../../database/entities/user.entity';
+import { AuditService } from '../../modules/audit/audit.service';
 
 export const AUDIT_ACTION_KEY = 'auditAction';
 
@@ -21,7 +20,7 @@ export class AuditInterceptor implements NestInterceptor {
 
   constructor(
     private readonly reflector: Reflector,
-    private readonly db: DataSource,
+    private readonly auditService: AuditService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
@@ -37,6 +36,7 @@ export class AuditInterceptor implements NestInterceptor {
       params?: Record<string, string>;
       body?: Record<string, unknown>;
       ip?: string;
+      headers?: Record<string, string>;
     }>();
 
     const user = request.user;
@@ -45,41 +45,28 @@ export class AuditInterceptor implements NestInterceptor {
       tap({
         next: () => {
           if (!user) return;
-          this.writeAuditLog(
-            user.id,
-            action,
-            request.params ?? {},
-            request.body ?? {},
-            request.ip ?? 'unknown',
-          ).catch((err: Error) => {
-            this.logger.error(`Audit log write failed: ${err.message}`);
-          });
+          const targetId =
+            request.params?.['id'] ??
+            request.params?.['listingId'] ??
+            request.params?.['userId'] ??
+            null;
+
+          this.auditService
+            .log({
+              actorId: user.id,
+              actorRole: user.role,
+              action,
+              targetType: action.split('.')[0] ?? 'unknown',
+              targetId,
+              afterState: request.body ?? null,
+              ipAddress: request.ip ?? null,
+              userAgent: request.headers?.['user-agent'] ?? null,
+            })
+            .catch((err: Error) => {
+              this.logger.error(`Audit interceptor error: ${err.message}`);
+            });
         },
       }),
     );
-  }
-
-  private async writeAuditLog(
-    userId: string,
-    action: string,
-    params: Record<string, unknown>,
-    body: Record<string, unknown>,
-    ip: string,
-  ) {
-    await this.db.query(
-      `INSERT INTO moderation_actions (actor_id, action, target_id, target_type, metadata, ip_address, created_at)
-       VALUES ($1, $2, $3, $4, $5::jsonb, $6, NOW())`,
-      [
-        userId,
-        action,
-        params['id'] ?? params['listingId'] ?? params['userId'] ?? null,
-        action.split('.')[0] ?? 'unknown',
-        JSON.stringify({ params, body }),
-        ip,
-      ],
-    ).catch((err: Error) => {
-      // moderation_actions table may not exist yet — fail silently in dev
-      this.logger.warn(`Audit table write: ${err.message}`);
-    });
   }
 }

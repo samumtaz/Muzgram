@@ -5,6 +5,7 @@ export enum UserRole {
   BUSINESS_OWNER = 'business_owner',
   MODERATOR = 'moderator',
   ADMIN = 'admin',
+  SUPER_ADMIN = 'super_admin',
 }
 
 export enum UserTrustTier {

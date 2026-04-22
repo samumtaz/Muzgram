@@ -11,6 +11,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { EventsModule } from './modules/events/events.module';
@@ -78,6 +79,7 @@ import { dataSourceOptions } from './database/data-source';
       }),
     }),
 
+    AuditModule,
     AnalyticsModule,
     AuthModule,
     BillingModule,
