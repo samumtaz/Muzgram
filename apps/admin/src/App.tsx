@@ -8,6 +8,14 @@ import { ListingsPage } from './pages/Listings';
 import { ModerationQueuePage } from './pages/ModerationQueue';
 import { PostsPage } from './pages/Posts';
 import { UsersPage } from './pages/Users';
+import { CitiesPage } from './pages/Cities';
+import { RevenuePage } from './pages/Revenue';
+import { VerificationsPage } from './pages/Verifications';
+import { AuditLogsPage } from './pages/AuditLogs';
+import { SupportPage } from './pages/Support';
+import { LeadsPage } from './pages/Leads';
+import { NotificationsLogPage } from './pages/NotificationsLog';
+import { AdminSettingsPage } from './pages/AdminSettings';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +36,14 @@ export default function App() {
             <Route path="events" element={<EventsPage />} />
             <Route path="posts" element={<PostsPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="verifications" element={<VerificationsPage />} />
+            <Route path="leads" element={<LeadsPage />} />
+            <Route path="revenue" element={<RevenuePage />} />
+            <Route path="cities" element={<CitiesPage />} />
+            <Route path="notifications-log" element={<NotificationsLogPage />} />
+            <Route path="audit-logs" element={<AuditLogsPage />} />
+            <Route path="support" element={<SupportPage />} />
+            <Route path="settings" element={<AdminSettingsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

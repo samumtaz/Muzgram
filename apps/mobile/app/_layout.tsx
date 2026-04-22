@@ -78,6 +78,13 @@ function RootLayoutNav() {
       <Stack.Screen name="event/[id]" options={{ animation: 'slide_from_bottom' }} />
       <Stack.Screen name="business/edit" options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
       <Stack.Screen name="business/onboarding" options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="business/leads" options={{ animation: 'slide_from_bottom' }} />
+      <Stack.Screen name="saves/index" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="settings/index" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="settings/notifications" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="settings/account" options={{ animation: 'slide_from_right' }} />
+      <Stack.Screen name="create/event" options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
+      <Stack.Screen name="report/index" options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
     </Stack>
   );
 }

@@ -2,18 +2,25 @@ import { NavLink, Outlet } from 'react-router-dom';
 
 const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard', emoji: '◎' },
-  { to: '/moderation', label: 'Moderation Queue', emoji: '⚠' },
+  { to: '/moderation', label: 'Moderation', emoji: '⚠' },
+  { to: '/verifications', label: 'Verifications', emoji: '✓' },
   { to: '/listings', label: 'Listings', emoji: '◻' },
   { to: '/events', label: 'Events', emoji: '◈' },
   { to: '/posts', label: 'Community Posts', emoji: '✎' },
   { to: '/users', label: 'Users', emoji: '◯' },
+  { to: '/leads', label: 'Leads', emoji: '→' },
+  { to: '/revenue', label: 'Revenue', emoji: '$' },
+  { to: '/cities', label: 'Cities', emoji: '⊕' },
+  { to: '/notifications-log', label: 'Push Notifications', emoji: '🔔' },
+  { to: '/audit-logs', label: 'Audit Logs', emoji: '☰' },
+  { to: '/support', label: 'Support', emoji: '?' },
+  { to: '/settings', label: 'Settings', emoji: '⚙' },
 ];
 
 export function AdminLayout() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0D0D0D', color: '#F5F5F5', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-      {/* Sidebar */}
-      <aside style={{ width: 220, borderRight: '1px solid #2A2A2A', padding: '24px 0', flexShrink: 0 }}>
+      <aside style={{ width: 220, borderRight: '1px solid #2A2A2A', padding: '24px 0', flexShrink: 0, overflowY: 'auto' as const }}>
         <div style={{ padding: '0 20px 24px', borderBottom: '1px solid #2A2A2A' }}>
           <span style={{ color: '#D4A853', fontSize: 18, fontWeight: 600 }}>Muzgram Admin</span>
         </div>
@@ -42,7 +49,6 @@ export function AdminLayout() {
         </nav>
       </aside>
 
-      {/* Main content */}
       <main style={{ flex: 1, overflow: 'auto' }}>
         <Outlet />
       </main>
