@@ -1,0 +1,44 @@
+import { DataSource, DataSourceOptions } from 'typeorm';
+
+import { CityEntity } from './entities/city.entity';
+import { CommunityPostEntity } from './entities/community-post.entity';
+import { DailySpecialEntity } from './entities/daily-special.entity';
+import { EventEntity } from './entities/event.entity';
+import { LeadEntity } from './entities/lead.entity';
+import { ListingCategoryEntity } from './entities/listing-category.entity';
+import { ListingEntity } from './entities/listing.entity';
+import { MediaAssetEntity } from './entities/media-asset.entity';
+import { NotificationEntity } from './entities/notification.entity';
+import { NotificationLogEntity } from './entities/notification-log.entity';
+import { ReportEntity } from './entities/report.entity';
+import { SaveEntity } from './entities/save.entity';
+import { UserEntity } from './entities/user.entity';
+import { PaymentEntity } from '../modules/billing/entities/payment.entity';
+import { SubscriptionEntity } from '../modules/billing/entities/subscription.entity';
+
+export const dataSourceOptions: DataSourceOptions = {
+  type: 'postgres',
+  url: process.env.DATABASE_URL,
+  entities: [
+    CityEntity,
+    UserEntity,
+    ListingCategoryEntity,
+    ListingEntity,
+    DailySpecialEntity,
+    EventEntity,
+    CommunityPostEntity,
+    LeadEntity,
+    SaveEntity,
+    MediaAssetEntity,
+    NotificationEntity,
+    NotificationLogEntity,
+    ReportEntity,
+    SubscriptionEntity,
+    PaymentEntity,
+  ],
+  migrations: ['dist/database/migrations/*.js'],
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  logging: process.env.NODE_ENV === 'development',
+};
+
+export const AppDataSource = new DataSource(dataSourceOptions);

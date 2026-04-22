@@ -1,0 +1,37 @@
+Muzgram redesign
+
+Phase 3 done
+Phase 4 done
+Phase 5 done
+Phase 6 done
+Phase 7 done 
+Phase 8 done
+Phase 9 done
+Phase 10 done
+Phase 11 done
+Phase 12 done
+Phase 13 done
+Phase 14 done
+Phase 15 done - testing
+did additional seo plan - done
+Phase 16 tbd - Launch Plan prompt
+Phase 17 
+
+
+Supabase:
+MuzgramSN
+Pf7RPWMzdNN48QDy
+
+Direct
+postgresql://postgres:UT2KRHiGkr6zqkX5@db.oodydljwbgjqupywuwoy.supabase.co:5432/postgres
+Pooler
+postgresql://postgres.oodydljwbgjqupywuwoy:UT2KRHiGkr6zqkX5@aws-1-us-east-1.pooler.supabase.com:6543/postgres
+
+
+UT2KRHiGkr6zqkX5
+
+
+
+
+
+make sure you add your own advanced brain, touch, suggestion, enhancement, saved docs, and from your memories etc and Use enhanced Industry standard 2026 modern design

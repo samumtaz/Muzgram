@@ -1,0 +1,48 @@
+name: Worker — Test & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/worker/**
+      - packages/**
+      - .github/workflows/worker.yml
+
+concurrency:
+  group: worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm turbo typecheck --filter=@muzgram/worker
+      - run: pnpm turbo test --filter=@muzgram/worker
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          REDIS_URL: redis://localhost:6379
+        services:
+          redis:
+            image: redis:7
+            ports:
+              - 6379:6379
+
+  deploy:
+    name: Deploy to Railway
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Trigger Railway worker deploy
+        run: |
+          curl -f -X POST "${{ secrets.RAILWAY_WORKER_DEPLOY_HOOK }}"

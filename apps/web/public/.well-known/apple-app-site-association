@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "XXXXXXXXXX.com.muzgram.ios",
+        "paths": [
+          "/*/places/*",
+          "/*/events/*",
+          "/*/go-out/*",
+          "/*/eat/*",
+          "/*/connect/*",
+          "/*/mosques",
+          "/*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["XXXXXXXXXX.com.muzgram.ios"]
+  }
+}

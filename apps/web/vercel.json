@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd ../.. && pnpm turbo build --filter=@muzgram/web",
+  "outputDirectory": ".next",
+  "installCommand": "cd ../.. && pnpm install",
+  "framework": "nextjs",
+  "regions": ["iad1", "ord1"]
+}

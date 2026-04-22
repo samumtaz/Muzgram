@@ -1,0 +1,133 @@
+name: API — Test, Migrate & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/api/**
+      - packages/**
+      - .github/workflows/api.yml
+
+concurrency:
+  group: api-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test & Typecheck
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm turbo typecheck --filter=@muzgram/api
+      - run: pnpm turbo test --filter=@muzgram/api
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL_STAGING }}
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test_secret_not_used_in_production
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY_TEST }}
+
+  migrate-staging:
+    name: Migrate Staging DB
+    needs: test
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - name: Build API
+        run: pnpm turbo build --filter=@muzgram/api
+      - name: Run migrations (staging)
+        run: pnpm --filter=@muzgram/api migrate:run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL_STAGING }}
+      - name: Notify on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: '{"text":"🚨 Staging migration failed on ${{ github.sha }}. Deploy blocked."}'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: migrate-staging
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Trigger Railway staging deploy
+        run: |
+          curl -f -X POST "${{ secrets.RAILWAY_STAGING_DEPLOY_HOOK }}"
+      - name: Health check
+        run: |
+          sleep 30
+          for i in 1 2 3 4 5; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api-staging.muzgram.com/health)
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed (status $STATUS), retrying..."
+            sleep 15
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
+
+  deploy-production:
+    name: Deploy to Production
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Migrate production DB
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm turbo build --filter=@muzgram/api
+      - run: pnpm --filter=@muzgram/api migrate:run
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PRODUCTION }}
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL_PRODUCTION }}
+      - name: Trigger Railway production deploy
+        run: |
+          curl -f -X POST "${{ secrets.RAILWAY_PRODUCTION_DEPLOY_HOOK }}"
+      - name: Health check
+        run: |
+          sleep 30
+          for i in 1 2 3 4 5; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api.muzgram.com/health)
+            if [ "$STATUS" = "200" ]; then
+              echo "Production health check passed"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Production health check failed"
+          exit 1

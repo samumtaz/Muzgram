@@ -1,0 +1,76 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4-alpine
+    container_name: muzgram_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: muzgram
+      POSTGRES_PASSWORD: muzgram_dev
+      POSTGRES_DB: muzgram
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U muzgram']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: muzgram_redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # S3-compatible local object storage (mirrors Cloudflare R2 API)
+  minio:
+    image: minio/minio:latest
+    container_name: muzgram_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: muzgram_minio
+      MINIO_ROOT_PASSWORD: muzgram_minio_dev
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ':9001'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  typesense:
+    image: typesense/typesense:27.0
+    container_name: muzgram_typesense
+    restart: unless-stopped
+    ports:
+      - '8108:8108'
+    volumes:
+      - typesense_data:/data
+    command: '--data-dir /data --api-key=muzgram_typesense_dev --enable-cors'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8108/health']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  typesense_data:

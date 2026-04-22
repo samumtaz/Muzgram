@@ -1,0 +1,67 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { ListingEntity } from './listing.entity';
+import { UserEntity } from './user.entity';
+
+export enum LeadStatus {
+  NEW = 'new',
+  VIEWED = 'viewed',
+  RESPONDED = 'responded',
+  CLOSED = 'closed',
+  SPAM = 'spam',
+}
+
+@Entity('leads')
+@Index(['listingId', 'createdAt'])
+@Index(['senderId'])
+export class LeadEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  listingId: string;
+
+  @ManyToOne(() => ListingEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'listingId' })
+  listing: ListingEntity;
+
+  @Column()
+  senderId: string;
+
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'senderId' })
+  sender: UserEntity;
+
+  @Column({ length: 20 })
+  senderPhone: string;
+
+  @Column({ length: 500, nullable: true })
+  message: string | null;
+
+  @Column({ type: 'enum', enum: LeadStatus, default: LeadStatus.NEW })
+  status: LeadStatus;
+
+  @Column({ nullable: true })
+  viewedAt: Date | null;
+
+  @Column({ nullable: true })
+  respondedAt: Date | null;
+
+  @Column({ type: 'text', nullable: true })
+  notes: string | null;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
