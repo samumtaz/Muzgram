@@ -54,7 +54,8 @@ export default async function TonightPage({ params }: { params: Promise<{ city: 
   const [cityRows, events] = await Promise.all([
     query<CityRow>(`SELECT id, slug, name FROM cities WHERE slug = $1 AND launch_status = 'active' LIMIT 1`, [city]),
     query<EventRow>(`
-      SELECT e.id, e.slug, e.title, e.start_at, e.end_at,
+      SELECT e.id, e.slug, e.title, e.start_at,
+             e."endAt" AS end_at,
              e.venue_name, e.address, e.cover_photo_url, e.is_free,
              e.price_cents, e.organizer_name, c.slug AS city_slug
       FROM events e
@@ -65,7 +66,7 @@ export default async function TonightPage({ params }: { params: Promise<{ city: 
         AND e.start_at <= $3
       ORDER BY e.start_at ASC
       LIMIT 40
-    `, [city, todayStart.toISOString(), todayEnd.toISOString()]),
+    `, [city, todayStart.toISOString(), todayEnd.toISOString()]).catch(() => [] as EventRow[]),
   ]);
 
   const cityData = cityRows[0];
