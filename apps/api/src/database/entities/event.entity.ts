@@ -51,7 +51,7 @@ export class EventEntity {
   organizer: UserEntity;
 
   // Null if organizer is a user directly; set if a business is hosting
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   listingId: string | null;
 
   @ManyToOne(() => ListingEntity, { nullable: true })
@@ -69,7 +69,7 @@ export class EventEntity {
   address: string;
 
   @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
-  location: object;
+  location: { type: string; coordinates: [number, number] };
 
   @Column({ type: 'decimal', precision: 10, scale: 7 })
   lat: number;
@@ -80,26 +80,26 @@ export class EventEntity {
   @Column()
   startAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   endAt: Date | null;
 
   @Column({ default: false })
   isRecurring: boolean;
 
   // iCal RRULE string (e.g., "FREQ=WEEKLY;BYDAY=FR")
-  @Column({ length: 500, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   recurrenceRule: string | null;
 
   @Column({ default: false })
   isOnline: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   onlineUrl: string | null;
 
   @Column({ default: true })
   isFree: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   ticketUrl: string | null;
 
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.PENDING })
@@ -108,13 +108,13 @@ export class EventEntity {
   @Column({ default: false })
   isFeatured: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   featuredUntil: Date | null;
 
   @Column({ type: 'simple-array', default: '' })
   mediaUrls: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   thumbnailUrl: string | null;
 
   @Column({ type: 'simple-array', default: '' })

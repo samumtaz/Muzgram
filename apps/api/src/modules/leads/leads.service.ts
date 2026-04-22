@@ -1,10 +1,11 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
-  TooManyRequestsException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
@@ -198,12 +199,10 @@ export class LeadsService {
     const count = await this.cache.get<number>(key) ?? 0;
 
     if (count >= MAX_LEADS_PER_WINDOW) {
-      throw new TooManyRequestsException({
-        type: '/errors/lead-limit-exceeded',
-        title: 'Lead limit exceeded',
-        status: 429,
-        detail: `Maximum ${MAX_LEADS_PER_WINDOW} leads to the same business per 7 days.`,
-      });
+      throw new HttpException(
+        `Maximum ${MAX_LEADS_PER_WINDOW} leads to the same business per 7 days.`,
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
     }
 
     await this.cache.set(key, count + 1, LEAD_WINDOW_SECONDS * 1000);

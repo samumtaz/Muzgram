@@ -5,6 +5,16 @@ export class LeadsTable1710000000004 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
+      CREATE OR REPLACE FUNCTION update_updated_at_column()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        NEW."updated_at" = NOW();
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql
+    `);
+
+    await queryRunner.query(`
       CREATE TYPE "lead_status_enum" AS ENUM ('new', 'viewed', 'responded', 'closed', 'spam')
     `);
 
@@ -27,10 +37,6 @@ export class LeadsTable1710000000004 implements MigrationInterface {
     await queryRunner.query(`CREATE INDEX "idx_leads_listing" ON "leads"("listing_id", "created_at" DESC)`);
     await queryRunner.query(`CREATE INDEX "idx_leads_sender" ON "leads"("sender_id")`);
     await queryRunner.query(`CREATE INDEX "idx_leads_status" ON "leads"("status")`);
-    await queryRunner.query(`
-      CREATE UNIQUE INDEX "idx_leads_dedup"
-      ON "leads"("listing_id", "sender_id", DATE_TRUNC('day', "created_at"))
-    `);
 
     await queryRunner.query(`
       CREATE TRIGGER "trg_leads_updated_at"

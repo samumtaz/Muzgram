@@ -13,10 +13,10 @@ export class NotificationLogEntity {
   @Column({ length: 255 })
   idempotencyKey: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   expoTicketId: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   deliveryStatus: string | null;
 
   @CreateDateColumn()

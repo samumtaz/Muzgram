@@ -11,8 +11,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { FastifyRequest } from 'fastify';
-
 import { UserEntity } from '../../database/entities/user.entity';
 
 import { AdminGuard } from '../../common/guards/admin.guard';
@@ -31,7 +29,7 @@ export class BillingController {
   @Post('webhook')
   @HttpCode(200)
   async stripeWebhook(
-    @Req() req: RawBodyRequest<FastifyRequest>,
+    @Req() req: RawBodyRequest<Record<string, unknown>>,
     @Headers('stripe-signature') signature: string,
   ) {
     const rawBody = (req.rawBody as Buffer | undefined) ?? Buffer.alloc(0);

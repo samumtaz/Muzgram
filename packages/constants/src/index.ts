@@ -34,6 +34,8 @@ export const FEED_SCORE = {
   ENGAGEMENT_SAVE_WEIGHT: 2,
   ENGAGEMENT_SHARE_WEIGHT: 5,
   ENGAGEMENT_MAX: 50,
+  // Featured content bonus
+  FEATURED_SCORE_BOOST: 200,
 } as const;
 
 // ─── Trust Tier ───────────────────────────────────────────────────────────────

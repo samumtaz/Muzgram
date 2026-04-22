@@ -24,15 +24,12 @@ export class SpatialIndexes1710000000001 implements MigrationInterface {
     `);
     await queryRunner.query(`
       CREATE INDEX "idx_events_upcoming" ON "events" ("cityId", "status", "startAt" ASC)
-      WHERE "startAt" > now() AND "status" = 'active'
     `);
     await queryRunner.query(`
       CREATE INDEX "idx_posts_active" ON "community_posts" ("cityId", "status", "createdAt" DESC)
-      WHERE "status" = 'active' AND "expiresAt" > now()
     `);
     await queryRunner.query(`
       CREATE INDEX "idx_daily_specials_active" ON "daily_specials" ("listingId", "expiresAt")
-      WHERE "expiresAt" > now()
     `);
 
     // Index for notification delivery queries

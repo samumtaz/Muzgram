@@ -72,7 +72,7 @@ export class FeedService {
       itemType: type,
       ...item,
       distanceKm,
-    })) as FeedItem[];
+    })) as unknown as FeedItem[];
 
     // Cache the full ranked feed for 60 seconds
     await this.cache.set(cacheKey, feedItems, TTL.FEED_CACHE_SECONDS * 1000);

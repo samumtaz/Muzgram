@@ -34,7 +34,7 @@ export class PaymentEntity {
   @JoinColumn({ name: 'listingId' })
   listing: ListingEntity;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   subscriptionId: string | null;
 
   @ManyToOne(() => SubscriptionEntity, (s) => s.payments, { nullable: true, onDelete: 'SET NULL' })
@@ -42,15 +42,15 @@ export class PaymentEntity {
   subscription: SubscriptionEntity | null;
 
   @Index({ unique: true })
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   stripePaymentIntentId: string | null;
 
   @Index({ unique: true })
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   stripeInvoiceId: string | null;
 
   @Index({ unique: true })
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   stripeCheckoutSessionId: string | null;
 
   @Column({ type: 'enum', enum: BillingProduct })
@@ -66,22 +66,22 @@ export class PaymentEntity {
   @Column({ length: 3, default: 'usd' })
   currency: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   description: string | null;
 
   @Column({ type: 'text', nullable: true })
   receiptUrl: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   refundedAt: Date | null;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   refundReason: string | null;
 
   @Column({ type: 'jsonb', default: {} })
   metadata: Record<string, unknown>;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   createdByUserId: string | null;
 
   @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL' })

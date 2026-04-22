@@ -18,7 +18,8 @@ import { SubscriptionEntity } from '../modules/billing/entities/subscription.ent
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
-  url: process.env.DATABASE_URL,
+  // Migrations use direct connection (bypasses PgBouncer — required for DDL)
+  url: process.env.DATABASE_DIRECT_URL ?? process.env.DATABASE_URL,
   entities: [
     CityEntity,
     UserEntity,
@@ -36,8 +37,8 @@ export const dataSourceOptions: DataSourceOptions = {
     SubscriptionEntity,
     PaymentEntity,
   ],
-  migrations: ['dist/database/migrations/*.js'],
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  migrations: ['dist/apps/api/src/database/migrations/*.js'],
+  ssl: { rejectUnauthorized: false },
   logging: process.env.NODE_ENV === 'development',
 };
 

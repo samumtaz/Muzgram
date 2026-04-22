@@ -16,6 +16,14 @@ interface SearchQuery {
   limit?: number;
 }
 
+interface SearchResultItem {
+  id: string;
+  type: string;
+  mainCategory?: string;
+  relevanceScore: number;
+  [key: string]: unknown;
+}
+
 @Injectable()
 export class SearchService {
   constructor(
@@ -44,9 +52,9 @@ export class SearchService {
 
     const tabs = {
       all: listings.length + events.length + posts.length,
-      food: listings.filter((l) => l.mainCategory === 'eat').length,
+      food: listings.filter((l: SearchResultItem) => l.mainCategory === 'eat').length,
       events: events.length,
-      services: listings.filter((l) => l.mainCategory === 'connect').length,
+      services: listings.filter((l: SearchResultItem) => l.mainCategory === 'connect').length,
       community: posts.length,
     };
 
@@ -218,7 +226,7 @@ export class SearchService {
     }));
   }
 
-  private filterByCategory(results: ReturnType<SearchService['filterByCategory']>, category?: string) {
+  private filterByCategory(results: SearchResultItem[], category?: string): SearchResultItem[] {
     if (!category || category === 'all') return results;
     return results.filter((r) => r.mainCategory === category);
   }

@@ -52,14 +52,14 @@ export class SubscriptionEntity {
   @JoinColumn({ name: 'listingId' })
   listing: ListingEntity;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   stripeCustomerId: string | null;
 
   @Index({ unique: true })
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   stripeSubscriptionId: string | null;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   stripePriceId: string | null;
 
   @Column({ type: 'enum', enum: BillingProduct })
@@ -78,25 +78,25 @@ export class SubscriptionEntity {
   @Column({ length: 3, default: 'usd' })
   currency: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   currentPeriodStart: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   currentPeriodEnd: Date | null;
 
   @Column({ default: false })
   cancelAtPeriodEnd: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   canceledAt: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   trialEnd: Date | null;
 
   @Column({ type: 'jsonb', default: {} })
   metadata: Record<string, unknown>;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   createdByUserId: string | null;
 
   @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL' })

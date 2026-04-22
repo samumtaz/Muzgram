@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { clerkClient } from '@clerk/clerk-sdk-node';
+import { verifyToken } from '@clerk/backend';
 
 import { UsersService } from '../../modules/users/users.service';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
@@ -36,7 +36,7 @@ export class ClerkAuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await clerkClient.verifyToken(token);
+      const payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
       const user = await this.usersService.findByClerkId(payload.sub);
 
       if (!user || !user.isActive) {

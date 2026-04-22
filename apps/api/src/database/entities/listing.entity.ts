@@ -55,12 +55,12 @@ export class ListingEntity {
   @Column({ length: 500 })
   address: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   neighborhood: string | null;
 
   // PostGIS geography point
   @Column({ type: 'geometry', spatialFeatureType: 'Point', srid: 4326 })
-  location: object;
+  location: { type: string; coordinates: [number, number] };
 
   @Column({ type: 'decimal', precision: 10, scale: 7 })
   lat: number;
@@ -68,19 +68,19 @@ export class ListingEntity {
   @Column({ type: 'decimal', precision: 10, scale: 7 })
   lng: number;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   website: string | null;
 
-  @Column({ length: 50, nullable: true })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   instagramHandle: string | null;
 
   @Column({ type: 'enum', enum: HalalCertification, default: HalalCertification.NONE })
   halalCertification: HalalCertification;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   certificationBody: string | null;
 
   @Column({ default: false })
@@ -96,16 +96,16 @@ export class ListingEntity {
   @Column({ default: false })
   isClaimed: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   claimedByUserId: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   claimedAt: Date | null;
 
   @Column({ default: false })
   isFeatured: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   featuredUntil: Date | null;
 
   @Column({ default: false })
@@ -118,7 +118,7 @@ export class ListingEntity {
   @Column({ type: 'simple-array', default: '' })
   mediaUrls: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   thumbnailUrl: string | null;
 
   @Column({ default: 0 })
@@ -133,7 +133,7 @@ export class ListingEntity {
   @Column({ default: 0 })
   leadsCount: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   importedFrom: string | null;
 
   @OneToMany(() => DailySpecialEntity, (special) => special.listing)

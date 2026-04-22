@@ -44,16 +44,16 @@ export class LeadEntity {
   @Column({ length: 20 })
   senderPhone: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ type: 'varchar', length: 500, nullable: true })
   message: string | null;
 
   @Column({ type: 'enum', enum: LeadStatus, default: LeadStatus.NEW })
   status: LeadStatus;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   viewedAt: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   respondedAt: Date | null;
 
   @Column({ type: 'text', nullable: true })

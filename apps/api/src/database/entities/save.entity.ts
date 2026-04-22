@@ -36,21 +36,21 @@ export class SaveEntity {
   contentId: string;
 
   // Nullable FK references — only one is populated based on contentType
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   listingId: string | null;
 
   @ManyToOne(() => ListingEntity, (l) => l.saves, { nullable: true })
   @JoinColumn({ name: 'listingId' })
   listing: ListingEntity | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   eventId: string | null;
 
   @ManyToOne(() => EventEntity, (e) => e.saves, { nullable: true })
   @JoinColumn({ name: 'eventId' })
   event: EventEntity | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   postId: string | null;
 
   @ManyToOne(() => CommunityPostEntity, (p) => p.saves, { nullable: true })

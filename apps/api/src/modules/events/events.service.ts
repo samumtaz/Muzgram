@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { MoreThan, Repository } from 'typeorm';
+import { DeepPartial, MoreThan, Repository } from 'typeorm';
 
 import { EventStatus } from '@muzgram/types';
 import { generateEventSlug } from '@muzgram/utils';
@@ -80,7 +80,7 @@ export class EventsService {
       status: EventStatus.PENDING,
       isFree: input.isFree ?? true,
       tags: input.tags ?? [],
-    });
+    } as DeepPartial<EventEntity>);
 
     return this.repo.save(event);
   }

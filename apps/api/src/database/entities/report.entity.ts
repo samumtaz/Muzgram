@@ -34,13 +34,13 @@ export class ReportEntity {
   @Column({ type: 'decimal', precision: 3, scale: 1 })
   weight: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   resolvedAt: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   resolvedBy: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   resolution: string | null;
 
   @CreateDateColumn()

@@ -37,14 +37,14 @@ export class CommunityPostEntity {
   @Column({ type: 'simple-array', default: '' })
   mediaUrls: string[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   linkedListingId: string | null;
 
   @ManyToOne(() => ListingEntity, { nullable: true })
   @JoinColumn({ name: 'linkedListingId' })
   linkedListing: ListingEntity | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   linkedEventId: string | null;
 
   @ManyToOne(() => EventEntity, { nullable: true })
@@ -63,7 +63,7 @@ export class CommunityPostEntity {
   @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
   lng: number | null;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   neighborhood: string | null;
 
   @Column({ type: 'enum', enum: PostStatus, default: PostStatus.PENDING })

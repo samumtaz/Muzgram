@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
 import { HalalCertification, ListingMainCategory, ListingStatus } from '@muzgram/types';
 import { generateListingSlug } from '@muzgram/utils';
@@ -81,7 +81,7 @@ export class ListingsService {
       location,
       status: ListingStatus.PENDING,
       halalCertification: input.halalCertification ?? HalalCertification.NONE,
-    });
+    } as DeepPartial<ListingEntity>);
 
     return this.repo.save(listing);
   }

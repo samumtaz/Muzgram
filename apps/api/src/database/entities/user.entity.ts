@@ -26,10 +26,10 @@ export class UserEntity {
   @Column({ length: 20 })
   phone: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   displayName: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   avatarUrl: string | null;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
@@ -38,10 +38,10 @@ export class UserEntity {
   @Column({ type: 'smallint', default: UserTrustTier.UNVERIFIED })
   trustTier: UserTrustTier;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   neighborhood: string | null;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   citySlug: string | null;
 
   // Last known location for proximity-based notifications
@@ -51,11 +51,11 @@ export class UserEntity {
   @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
   lastKnownLng: number | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   lastKnownAt: Date | null;
 
   // Push notification token (Expo Push Token)
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   expoPushToken: string | null;
 
   // Notification preferences stored as JSONB
@@ -69,7 +69,7 @@ export class UserEntity {
   @Column({ default: 0 })
   notificationsSentToday: number;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   notificationsResetAt: Date | null;
 
   @Column({ default: 0 })

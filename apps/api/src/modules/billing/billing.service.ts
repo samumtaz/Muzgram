@@ -7,7 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ListingEntity } from '../../database/entities/listing.entity';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
@@ -67,7 +67,7 @@ export class BillingService {
   ) {
     const stripeKey = this.config.get<string>('STRIPE_SECRET_KEY');
     if (stripeKey) {
-      this.stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });
+      this.stripe = new Stripe(stripeKey, { apiVersion: '2025-02-24.acacia' });
     }
   }
 
@@ -418,7 +418,7 @@ export class BillingService {
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
   private async activateFeaturedStatus(
-    manager: Parameters<Parameters<DataSource['transaction']>[0]>[0],
+    manager: EntityManager,
     listing: ListingEntity,
     product: BillingProduct,
     interval: BillingInterval,

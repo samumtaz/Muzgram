@@ -87,7 +87,7 @@ export class FeedScoringService {
       ageHours,
       distanceKm: listing.distanceKm,
       contentTypeBoost: FEED_SCORE.TYPE_LISTING_BOOST,
-      trustScore: listing.trustScore,
+      trustScore: listing.trustScore ?? 0,
       savesCount: listing.savesCount,
       sharesCount: listing.sharesCount,
       isFeatured: listing.isFeatured && (!listing.featuredUntil || listing.featuredUntil > now),

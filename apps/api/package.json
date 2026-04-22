@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migrate": "typeorm migration:generate -d dist/database/data-source.js",
-    "migrate:run": "typeorm migration:run -d dist/database/data-source.js",
-    "migrate:revert": "typeorm migration:revert -d dist/database/data-source.js"
+    "migrate": "typeorm migration:generate -d dist/apps/api/src/database/data-source.js",
+    "migrate:run": "typeorm migration:run -d dist/apps/api/src/database/data-source.js",
+    "migrate:revert": "typeorm migration:revert -d dist/apps/api/src/database/data-source.js"
   },
   "dependencies": {
     "@muzgram/constants": "workspace:*",
@@ -33,7 +33,7 @@
     "cache-manager-redis-yet": "^5.1.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "clerk-sdk-node": "^5.1.1",
+    "@clerk/backend": "^1.25.8",
     "expo-server-sdk": "^3.11.0",
     "helmet": "^8.0.0",
     "ioredis": "^5.4.1",

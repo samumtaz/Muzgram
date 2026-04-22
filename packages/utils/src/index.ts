@@ -112,7 +112,7 @@ export interface FeedScoreFactors {
   ageHours: number;
   distanceKm: number;
   contentTypeBoost: number;
-  trustTier: number;
+  trustScore: number;
   savesCount: number;
   sharesCount: number;
   isFeatured: boolean;
@@ -126,8 +126,8 @@ export function computeFeedScore(factors: FeedScoreFactors): number {
     factors.sharesCount * FEED_SCORE.ENGAGEMENT_SHARE_WEIGHT,
     FEED_SCORE.ENGAGEMENT_MAX,
   );
-  const trust = factors.trustTier * FEED_SCORE.TRUST_TIER_BOOST_PER_LEVEL;
-  const featured = factors.isFeatured ? FEED_SCORE.FEATURED_SCORE_BOOST : 0;
+  const trust = factors.trustScore * FEED_SCORE.TRUST_TIER_BOOST_PER_LEVEL;
+  const featured = factors.isFeatured ? (FEED_SCORE as Record<string, number>).FEATURED_SCORE_BOOST ?? 200 : 0;
 
   return recency + proximity + factors.contentTypeBoost + trust + engagement + featured;
 }

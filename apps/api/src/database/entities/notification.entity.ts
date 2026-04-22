@@ -35,7 +35,7 @@ export class NotificationEntity {
   body: string;
 
   // Deep link for the notification action
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   actionUrl: string | null;
 
   @Column({ type: 'jsonb', default: {} })
@@ -44,11 +44,11 @@ export class NotificationEntity {
   @Column({ default: false })
   isRead: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   readAt: Date | null;
 
   // Null if push delivery not attempted yet
-  @Column({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   deliveredAt: Date | null;
 
   @CreateDateColumn()

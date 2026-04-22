@@ -10,7 +10,7 @@ import { EventEntity } from '../../database/entities/event.entity';
 import { ListingEntity } from '../../database/entities/listing.entity';
 import { SaveEntity } from '../../database/entities/save.entity';
 
-interface ToggleSaveResult {
+export interface ToggleSaveResult {
   saved: boolean;
   savesCount: number;
 }

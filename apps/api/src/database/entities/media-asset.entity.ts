@@ -42,7 +42,7 @@ export class MediaAssetEntity {
   @Column({ default: false })
   isModerated: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   moderationResult: string | null;
 
   @Column({ default: true })

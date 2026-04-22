@@ -6,7 +6,7 @@ Sentry.init({
   environment: process.env.NODE_ENV ?? 'development',
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
   release: process.env.npm_package_version,
-  integrations: [new Sentry.Integrations.Http({ tracing: true })],
+  integrations: [Sentry.httpIntegration()],
 });
 
 import { Logger, ValidationPipe } from '@nestjs/common';

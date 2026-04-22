@@ -28,7 +28,7 @@ export class ListingCategoryEntity {
   @Column({ type: 'enum', enum: ListingMainCategory })
   mainCategory: ListingMainCategory;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   parentId: string | null;
 
   @ManyToOne(() => ListingCategoryEntity, (cat) => cat.children, { nullable: true })
