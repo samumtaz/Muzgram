@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm --filter @muzgram/types build && pnpm --filter @muzgram/constants build && pnpm build",
   "outputDirectory": ".next",
-  "installCommand": "pnpm install --no-frozen-lockfile",
+  "installCommand": "pnpm install --no-frozen-lockfile --ignore-scripts",
   "framework": "nextjs"
 }
