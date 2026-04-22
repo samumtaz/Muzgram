@@ -135,7 +135,7 @@ export default async function CityHubPage({
       JOIN cities c2 ON c2.cluster_city_id = c1.cluster_city_id
       WHERE c1.slug = $1 AND c2.slug != $1 AND c2.launch_status = 'active'
       LIMIT 8
-    `, [city]),
+    `, [city]).catch(() => [] as ClusterCity[]),
   ]);
 
   const cityData = cityRows[0];
