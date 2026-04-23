@@ -299,7 +299,7 @@ export default async function HomePage() {
             </div>
 
             {/* Desktop phone — full version (hidden on mobile) */}
-            <div className="hidden md:flex justify-end relative">
+            <div className="hidden md:flex justify-center relative">
 
               {/* Deep glow behind phone */}
               <div
