@@ -2,8 +2,11 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuthStore } from '../../src/stores/auth.store';
+
 export default function WelcomeScreen() {
   const router = useRouter();
+  const setOnboardingComplete = useAuthStore((s) => s.setOnboardingComplete);
 
   return (
     <SafeAreaView className="flex-1 bg-background px-6">
@@ -26,7 +29,10 @@ export default function WelcomeScreen() {
           <Text className="text-background font-bold text-base">Get Started</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => router.replace('/(tabs)')}
+          onPress={() => {
+            setOnboardingComplete();
+            router.replace('/(tabs)');
+          }}
           activeOpacity={0.7}
           className="py-3 items-center"
         >

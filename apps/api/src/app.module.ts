@@ -3,6 +3,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -26,7 +27,10 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { PostsModule } from './modules/posts/posts.module';
 import { ProvidersModule } from './modules/providers/providers.module';
 import { SavesModule } from './modules/saves/saves.module';
+import { SupportModule } from './modules/support/support.module';
 import { UsersModule } from './modules/users/users.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { HealthModule } from './modules/health/health.module';
 import { dataSourceOptions } from './database/data-source';
 
 @Module({
@@ -34,12 +38,14 @@ import { dataSourceOptions } from './database/data-source';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
+      envFilePath: ['.env', '../../.env'],
     }),
 
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: () => ({
+      useFactory: (config: ConfigService) => ({
         ...dataSourceOptions,
+        url: config.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
       }),
     }),
@@ -79,6 +85,8 @@ import { dataSourceOptions } from './database/data-source';
       }),
     }),
 
+    ScheduleModule.forRoot(),
+
     AuditModule,
     AnalyticsModule,
     AuthModule,
@@ -96,6 +104,9 @@ import { dataSourceOptions } from './database/data-source';
     MediaModule,
     NotificationsModule,
     ModerationModule,
+    SupportModule,
+    AdminModule,
+    HealthModule,
   ],
   providers: [
     // Throttler guard applied globally

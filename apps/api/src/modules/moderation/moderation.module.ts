@@ -6,10 +6,11 @@ import { CommunityPostEntity } from '../../database/entities/community-post.enti
 import { EventEntity } from '../../database/entities/event.entity';
 import { ListingEntity } from '../../database/entities/listing.entity';
 import { ReportEntity } from '../../database/entities/report.entity';
+import { UsersModule } from '../users/users.module';
+import { MODERATION_QUEUE } from './moderation.constants';
 import { ModerationController } from './moderation.controller';
+import { ModerationProcessor } from './moderation.processor';
 import { ModerationService } from './moderation.service';
-
-export const MODERATION_QUEUE = 'moderation';
 
 @Module({
   imports: [
@@ -20,9 +21,10 @@ export const MODERATION_QUEUE = 'moderation';
       CommunityPostEntity,
     ]),
     BullModule.registerQueue({ name: MODERATION_QUEUE }),
+    UsersModule,
   ],
   controllers: [ModerationController],
-  providers: [ModerationService],
+  providers: [ModerationService, ModerationProcessor],
   exports: [ModerationService],
 })
 export class ModerationModule {}

@@ -74,7 +74,6 @@ export function SavesScreen() {
       ) : (
         <FlashList
           data={items}
-          estimatedItemSize={120}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ padding: 16 }}
           ItemSeparatorComponent={() => <View className="h-3" />}
@@ -82,9 +81,9 @@ export function SavesScreen() {
           onEndReachedThreshold={0.3}
           renderItem={({ item }) =>
             item.type === 'listing' ? (
-              <ListingCard listing={item.listing!} citySlug={item.listing!.city_slug} />
+              <ListingCard listing={item.listing! as any} />
             ) : (
-              <EventCard event={item.event!} citySlug={item.event!.city_slug} />
+              <EventCard event={item.event! as any} />
             )
           }
           ListFooterComponent={

@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { AdminLayout } from './components/layout/AdminLayout';
+import { RequireAuth } from './components/RequireAuth';
+import { LoginPage } from './pages/Login';
 import { DashboardPage } from './pages/Dashboard';
 import { EventsPage } from './pages/Events';
 import { ListingsPage } from './pages/Listings';
@@ -28,22 +30,25 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="moderation" element={<ModerationQueuePage />} />
-            <Route path="listings" element={<ListingsPage />} />
-            <Route path="events" element={<EventsPage />} />
-            <Route path="posts" element={<PostsPage />} />
-            <Route path="users" element={<UsersPage />} />
-            <Route path="verifications" element={<VerificationsPage />} />
-            <Route path="leads" element={<LeadsPage />} />
-            <Route path="revenue" element={<RevenuePage />} />
-            <Route path="cities" element={<CitiesPage />} />
-            <Route path="notifications-log" element={<NotificationsLogPage />} />
-            <Route path="audit-logs" element={<AuditLogsPage />} />
-            <Route path="support" element={<SupportPage />} />
-            <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="moderation" element={<ModerationQueuePage />} />
+              <Route path="listings" element={<ListingsPage />} />
+              <Route path="events" element={<EventsPage />} />
+              <Route path="posts" element={<PostsPage />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="verifications" element={<VerificationsPage />} />
+              <Route path="leads" element={<LeadsPage />} />
+              <Route path="revenue" element={<RevenuePage />} />
+              <Route path="cities" element={<CitiesPage />} />
+              <Route path="notifications-log" element={<NotificationsLogPage />} />
+              <Route path="audit-logs" element={<AuditLogsPage />} />
+              <Route path="support" element={<SupportPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

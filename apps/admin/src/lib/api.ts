@@ -1,9 +1,21 @@
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3100';
 
-let adminToken: string | null = null;
+const TOKEN_KEY = 'muzgram_admin_token';
+
+let adminToken: string | null = localStorage.getItem(TOKEN_KEY);
 
 export function setAdminToken(token: string) {
   adminToken = token;
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearAdminToken() {
+  adminToken = null;
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export function getAdminToken(): string | null {
+  return adminToken;
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -13,7 +25,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     ...(init.headers as Record<string, string>),
   };
 
-  const response = await fetch(`${API_URL}${path}`, { ...init, headers });
+  const response = await fetch(`${API_URL}/v1${path}`, { ...init, headers });
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({ detail: response.statusText }));

@@ -8,7 +8,8 @@ import { ListingStatus } from '@muzgram/types';
 
 interface SearchQuery {
   q: string;
-  cityId: string;
+  cityId?: string;
+  citySlug?: string;
   category?: string;
   lat?: number;
   lng?: number;
@@ -33,17 +34,64 @@ export class SearchService {
     private readonly cache: Cache,
   ) {}
 
+  private async resolveCityId(cityId?: string, citySlug?: string): Promise<string | undefined> {
+    if (cityId) return cityId;
+    if (!citySlug) return undefined;
+    const rows = await this.db.query<[{ id: string }]>(
+      `SELECT id FROM cities WHERE slug = $1 AND is_active = true LIMIT 1`,
+      [citySlug],
+    );
+    return rows[0]?.id;
+  }
+
+  async suggest(q: string, cityId?: string, citySlug?: string) {
+    const resolvedCityId = await this.resolveCityId(cityId, citySlug);
+    const wildcard = `${q.replace(/[%_]/g, '\\$&')}%`;
+    const params: unknown[] = [wildcard];
+    const cityFilter = resolvedCityId ? ` AND city_id = $2` : '';
+    if (resolvedCityId) params.push(resolvedCityId);
+
+    const [listings, events] = await Promise.all([
+      this.db.query<Array<{ id: string; name: string; slug: string; main_category: string }>>(
+        `SELECT id, name, slug, main_category FROM listings
+         WHERE name ILIKE $1 AND status = 'active'${cityFilter}
+         ORDER BY save_count DESC LIMIT 5`,
+        params,
+      ),
+      this.db.query<Array<{ id: string; name: string; slug: string }>>(
+        `SELECT id, title AS name, slug FROM events
+         WHERE title ILIKE $1 AND status = 'active' AND start_at > NOW()${cityFilter}
+         ORDER BY rsvp_count DESC LIMIT 3`,
+        params,
+      ),
+    ]);
+
+    const suggestions = [
+      ...listings.map((r) => ({
+        id: r.id, name: r.name, type: 'listing' as const, slug: r.slug, mainCategory: r.main_category,
+      })),
+      ...events.map((r) => ({
+        id: r.id, name: r.name, type: 'event' as const, slug: r.slug, mainCategory: undefined,
+      })),
+    ].slice(0, 5);
+
+    return { suggestions };
+  }
+
   async search(query: SearchQuery) {
     const limit = Math.min(query.limit ?? 20, 50);
-    const cacheKey = `search:${Buffer.from(JSON.stringify(query)).toString('base64').slice(0, 64)}`;
+    const resolvedCityId = await this.resolveCityId(query.cityId, query.citySlug);
+    const cacheKey = `search:${Buffer.from(JSON.stringify({ ...query, cityId: resolvedCityId })).toString('base64').slice(0, 64)}`;
 
     const cached = await this.cache.get(cacheKey);
     if (cached) return cached;
 
+    const queryWithCity = { ...query, cityId: resolvedCityId };
+
     const [listings, events, posts] = await Promise.all([
-      this.searchListings(query, limit),
-      this.searchEvents(query, limit),
-      this.searchPosts(query, limit),
+      this.searchListings(queryWithCity, limit),
+      this.searchEvents(queryWithCity, limit),
+      this.searchPosts(queryWithCity, limit),
     ]);
 
     const allResults = [...listings, ...events, ...posts]
@@ -58,7 +106,7 @@ export class SearchService {
       community: posts.length,
     };
 
-    const filtered = this.filterByCategory(allResults, query.category);
+    const filtered = this.filterByCategory(allResults, queryWithCity.category);
 
     const resultLabel = this.buildResultLabel(filtered.length, query.lat != null);
 
@@ -77,6 +125,12 @@ export class SearchService {
 
   private async searchListings(query: SearchQuery, limit: number) {
     const hasLocation = query.lat != null && query.lng != null;
+    const params: unknown[] = [query.q];
+    let paramIdx = 2;
+    const cityClause = query.cityId ? `AND l.city_id = $${paramIdx++}` : '';
+    if (query.cityId) params.push(query.cityId);
+    params.push(limit);
+    const limitParam = `$${paramIdx}`;
 
     const sql = `
       SELECT
@@ -99,14 +153,13 @@ export class SearchService {
       FROM listings l,
            plainto_tsquery('english', $1) query
       WHERE l.search_vector @@ query
-        AND l.city_id = $2
+        ${cityClause}
         AND l.status = '${ListingStatus.ACTIVE}'
         ${query.radiusMeters && hasLocation ? `AND ST_DWithin(l.location, ST_SetSRID(ST_MakePoint($lat, $lng), 4326)::geography, ${query.radiusMeters})` : ''}
       ORDER BY rank DESC, l.is_featured DESC
-      LIMIT $3
+      LIMIT ${limitParam}
     `;
 
-    const params: unknown[] = [query.q, query.cityId, limit];
     const finalSql = hasLocation
       ? sql.replace('$lat', String(query.lng)).replace('$lng', String(query.lat))
       : sql;
@@ -137,6 +190,13 @@ export class SearchService {
   }
 
   private async searchEvents(query: SearchQuery, limit: number) {
+    const params: unknown[] = [query.q];
+    let paramIdx = 2;
+    const cityClause = query.cityId ? `AND e.city_id = $${paramIdx++}` : '';
+    if (query.cityId) params.push(query.cityId);
+    params.push(limit);
+    const limitParam = `$${paramIdx}`;
+
     const sql = `
       SELECT
         e.id,
@@ -152,14 +212,14 @@ export class SearchService {
       FROM events e,
            plainto_tsquery('english', $1) query
       WHERE e.search_vector @@ query
-        AND e.city_id = $2
+        ${cityClause}
         AND e.status = 'active'
         AND e.start_at > NOW()
       ORDER BY rank DESC, e.start_at ASC
-      LIMIT $3
+      LIMIT ${limitParam}
     `;
 
-    const rows = await this.db.query(sql, [query.q, query.cityId, limit]);
+    const rows = await this.db.query(sql, params);
 
     return rows.map((r: Record<string, unknown>) => ({
       contentType: 'event' as const,
@@ -183,6 +243,13 @@ export class SearchService {
   }
 
   private async searchPosts(query: SearchQuery, limit: number) {
+    const params: unknown[] = [query.q];
+    let paramIdx = 2;
+    const cityClause = query.cityId ? `AND p.city_id = $${paramIdx++}` : '';
+    if (query.cityId) params.push(query.cityId);
+    params.push(limit);
+    const limitParam = `$${paramIdx}`;
+
     const sql = `
       SELECT
         p.id,
@@ -197,13 +264,13 @@ export class SearchService {
       JOIN users u ON u.id = p.author_id,
            plainto_tsquery('english', $1) query
       WHERE p.search_vector @@ query
-        AND p.city_id = $2
+        ${cityClause}
         AND p.status = 'active'
       ORDER BY rank DESC, p.created_at DESC
-      LIMIT $3
+      LIMIT ${limitParam}
     `;
 
-    const rows = await this.db.query(sql, [query.q, query.cityId, limit]);
+    const rows = await this.db.query(sql, params);
 
     return rows.map((r: Record<string, unknown>) => ({
       contentType: 'post' as const,

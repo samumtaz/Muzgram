@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ListingEntity } from '../../database/entities/listing.entity';
 import { UserEntity } from '../../database/entities/user.entity';
+import { UsersModule } from '../users/users.module';
 import { BillingController } from './billing.controller';
 import { BillingService } from './billing.service';
 import { PaymentEntity } from './entities/payment.entity';
@@ -16,6 +17,7 @@ import { SubscriptionEntity } from './entities/subscription.entity';
       ListingEntity,
       UserEntity,
     ]),
+    UsersModule,
   ],
   controllers: [BillingController],
   providers: [BillingService],

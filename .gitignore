@@ -59,3 +59,5 @@ ormconfig.js
 *.pem
 service-account.json
 google-credentials.json
+
+.vercel

@@ -5,6 +5,7 @@ import { Queue } from 'bull';
 import { DataSource } from 'typeorm';
 
 import { AnalyticsEventDto } from './dto/batch-events.dto';
+import { ANALYTICS_QUEUE } from './analytics.constants';
 import { SessionStartDto } from './dto/session-start.dto';
 
 const VALID_EVENT_NAMES = new Set([
@@ -23,7 +24,7 @@ export class AnalyticsService {
   private readonly logger = new Logger(AnalyticsService.name);
 
   constructor(
-    @InjectQueue('notifications')
+    @InjectQueue(ANALYTICS_QUEUE)
     private readonly queue: Queue,
     @InjectDataSource()
     private readonly db: DataSource,

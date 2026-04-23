@@ -1,13 +1,16 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bull';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { Queue } from 'bull';
 import { Repository } from 'typeorm';
 
-import { PostStatus } from '@muzgram/types';
+import { ContentType, PostStatus } from '@muzgram/types';
 import { TRUST_TIER, TTL } from '@muzgram/constants';
 
 import { CommunityPostEntity } from '../../database/entities/community-post.entity';
 import { UserEntity } from '../../database/entities/user.entity';
+import { MODERATION_QUEUE } from '../moderation/moderation.constants';
 
 interface CreatePostInput {
   body: string;
@@ -25,6 +28,8 @@ export class PostsService {
   constructor(
     @InjectRepository(CommunityPostEntity)
     private readonly repo: Repository<CommunityPostEntity>,
+    @InjectQueue(MODERATION_QUEUE)
+    private readonly moderationQueue: Queue,
   ) {}
 
   async findById(id: string): Promise<CommunityPostEntity> {
@@ -69,7 +74,19 @@ export class PostsService {
       (post as any).location = location;
     }
 
-    return this.repo.save(post);
+    const saved = await this.repo.save(post);
+
+    // Enqueue photo scan if the post has media
+    if (saved.mediaUrls.length > 0) {
+      await this.moderationQueue.add('scan-content', {
+        contentType: ContentType.POST,
+        contentId: saved.id,
+        photoUrls: saved.mediaUrls,
+        text: input.body,
+      }, { attempts: 2, backoff: 5000 });
+    }
+
+    return saved;
   }
 
   async deletePost(postId: string, userId: string): Promise<void> {

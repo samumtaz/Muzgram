@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { clearAdminToken } from '../../lib/api';
 
 const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard', emoji: '◎' },
@@ -18,13 +19,20 @@ const NAV_LINKS = [
 ];
 
 export function AdminLayout() {
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    clearAdminToken();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0D0D0D', color: '#F5F5F5', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-      <aside style={{ width: 220, borderRight: '1px solid #2A2A2A', padding: '24px 0', flexShrink: 0, overflowY: 'auto' as const }}>
+      <aside style={{ width: 220, borderRight: '1px solid #2A2A2A', padding: '24px 0', flexShrink: 0, overflowY: 'auto' as const, display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '0 20px 24px', borderBottom: '1px solid #2A2A2A' }}>
           <span style={{ color: '#D4A853', fontSize: 18, fontWeight: 600 }}>Muzgram Admin</span>
         </div>
-        <nav style={{ marginTop: 16 }}>
+        <nav style={{ marginTop: 16, flex: 1 }}>
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.to}
@@ -47,6 +55,23 @@ export function AdminLayout() {
             </NavLink>
           ))}
         </nav>
+        <div style={{ padding: '16px 20px', borderTop: '1px solid #2A2A2A' }}>
+          <button
+            onClick={handleSignOut}
+            style={{
+              width: '100%',
+              padding: '8px',
+              backgroundColor: 'transparent',
+              border: '1px solid #2A2A2A',
+              borderRadius: 6,
+              color: '#606060',
+              cursor: 'pointer',
+              fontSize: 13,
+            }}
+          >
+            Sign Out
+          </button>
+        </div>
       </aside>
 
       <main style={{ flex: 1, overflow: 'auto' }}>

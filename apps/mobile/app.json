@@ -18,6 +18,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.muzgram.app",
+      "associatedDomains": [
+        "applinks:muzgram.com",
+        "applinks:www.muzgram.com"
+      ],
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Muzgram uses your location to show you halal restaurants, events, and businesses near you.",
         "NSLocationAlwaysUsageDescription": "Muzgram uses your location to show you nearby content.",
@@ -32,6 +36,26 @@
         "backgroundColor": "#0D0D0D"
       },
       "package": "com.muzgram.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "muzgram.com"
+            },
+            {
+              "scheme": "https",
+              "host": "www.muzgram.com"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
@@ -66,7 +90,8 @@
           ]
         }
       ],
-      "@rnmapbox/maps"
+      "expo-image-picker",
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true
@@ -74,7 +99,7 @@
     "extra": {
       "clerkPublishableKey": "",
       "apiUrl": "",
-      "mapboxAccessToken": "",
+      "googleMapsApiKey": "",
       "eas": {
         "projectId": "bfebf288-11da-4edd-b79b-43b2abe27ec7"
       },

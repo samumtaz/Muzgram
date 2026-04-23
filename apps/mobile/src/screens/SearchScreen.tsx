@@ -192,7 +192,6 @@ export function SearchScreen() {
               renderItem={({ item }) => (
                 <SearchResultCard item={item} onPress={handleResultPress} />
               )}
-              estimatedItemSize={64}
               keyExtractor={(item) => `${item.contentType}-${item.item.id}`}
               ListHeaderComponent={
                 results?.resultLabel ? (

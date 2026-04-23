@@ -1,3 +1,8 @@
+import * as path from 'path';
+import * as dotenv from 'dotenv';
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 import { SnakeNamingStrategy } from './snake-naming.strategy';
@@ -40,7 +45,7 @@ export const dataSourceOptions: DataSourceOptions = {
     PaymentEntity,
     AuditLogEntity,
   ],
-  migrations: ['dist/apps/api/src/database/migrations/*.js'],
+  migrations: [path.resolve(__dirname, 'migrations/*.{ts,js}')],
   namingStrategy: new SnakeNamingStrategy(),
   ssl: { rejectUnauthorized: false },
   logging: process.env.NODE_ENV === 'development',

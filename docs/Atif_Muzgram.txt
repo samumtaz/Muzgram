@@ -35,3 +35,56 @@ UT2KRHiGkr6zqkX5
 
 
 make sure you add your own advanced brain, touch, suggestion, enhancement, saved docs, and from your memories etc and Use enhanced Industry standard 2026 modern design
+
+direct
+postgresql://postgres:LG3kL994LSUxwfSK@db.oodydljwbgjqupywuwoy.supabase.co:5432/postgres
+
+pooler
+postgresql://postgres.oodydljwbgjqupywuwoy:LG3kL994LSUxwfSK@aws-1-us-east-1.pooler.supabase.com:6543/postgres
+
+LG3kL994LSUxwfSK
+
+CREATE USER muzgram_web_readonly WITH PASSWORD 'kkabc1235585022';
+GRANT CONNECT ON DATABASE postgres TO muzgram_web_readonly;
+GRANT USAGE ON SCHEMA public TO muzgram_web_readonly;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO muzgram_web_readonly;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO muzgram_web_readonly;
+
+ALTER USER muzgram_web_readonly WITH PASSWORD 'mm1235585022';
+
+----------------------------------------------
+
+Google seed detail
+How to use it
+Step 1 — Get a Google Places API key
+
+Go to console.cloud.google.com
+Create a project → Enable "Places API" (the classic one, not Places API New)
+API & Services → Credentials → Create API Key
+Restrict it to "Places API" only
+Step 2 — Run the migration
+
+
+pnpm --filter=@muzgram/api migrate:run
+Step 3 — Dry run first (no DB writes, just prints)
+
+
+GOOGLE_PLACES_API_KEY=AIza... pnpm --filter=@muzgram/api seed:places:dry
+You'll see every business it would import printed to the terminal.
+
+Step 4 — Run for real
+
+
+GOOGLE_PLACES_API_KEY=AIza... DATABASE_URL=postgres://... pnpm --filter=@muzgram/api seed:places
+Run a custom one-off query:
+
+
+GOOGLE_PLACES_API_KEY=AIza... pnpm --filter=@muzgram/api seed:places -- --queries="halal restaurant Oak Park Illinois,mosque Oak Park"
+What it pulls for Chicago:
+
+33 search queries covering Devon Ave, Bridgeview, Skokie, Schaumburg, Bolingbrook
+Halal restaurants, Pakistani/Indian/Afghan/Middle Eastern food, halal grocers, mosques, Islamic centers, desi clothing/jewelry, hookah lounges
+For each business: name, address, GPS coords, phone, website, business hours (parsed into Muzgram's { monday: { open, close } } format), up to 5 photos, Google rating
+Idempotent — re-runs update hours/rating, never create duplicates (deduped by Google Place ID stored in external_id)
+Auto-refreshes FTS search vectors after import so search works immediately
+The total API cost for all 33 queries × 3 pages + ~1,000 Place Details calls is roughly $10–18, well within Google's $200/month free credit.

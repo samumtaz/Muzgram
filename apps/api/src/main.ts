@@ -1,4 +1,11 @@
 import 'reflect-metadata';
+import * as path from 'path';
+import * as dotenv from 'dotenv';
+
+// Load root monorepo .env before anything else (covers local dev)
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') }); // fallback
+
 import * as Sentry from '@sentry/nestjs';
 
 Sentry.init({

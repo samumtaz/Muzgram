@@ -140,7 +140,6 @@ export function NotificationsScreen() {
         <FlashList
           data={allNotifs}
           renderItem={renderItem}
-          estimatedItemSize={72}
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl

@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 
-import MapboxGL from '@rnmapbox/maps';
+import MapView, { Marker, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Image } from 'expo-image';
 import {
   Animated,
+  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -23,8 +24,6 @@ import { useLocationStore } from '../../src/stores/location.store';
 import { HalalBadge } from '../../src/components/ui/HalalBadge';
 import { track, screen } from '../../src/lib/analytics';
 
-MapboxGL.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN ?? '');
-
 const CATEGORY_PIN_COLORS: Record<string, string> = {
   eat: '#E07B39',
   go_out: '#9B59B6',
@@ -42,6 +41,26 @@ const CATEGORIES = [
 ];
 
 const SNAP_POINTS = ['35%', '75%', '95%'];
+
+const DARK_MAP_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#212121' }] },
+  { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#757575' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#212121' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#757575' }] },
+  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#bdbdbd' }] },
+  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#757575' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#181818' }] },
+  { featureType: 'poi.park', elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
+  { featureType: 'road', elementType: 'geometry.fill', stylers: [{ color: '#2c2c2c' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#8a8a8a' }] },
+  { featureType: 'road.arterial', elementType: 'geometry', stylers: [{ color: '#373737' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3c3c3c' }] },
+  { featureType: 'road.local', elementType: 'labels.text.fill', stylers: [{ color: '#616161' }] },
+  { featureType: 'transit', elementType: 'labels.text.fill', stylers: [{ color: '#757575' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#000000' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3d3d3d' }] },
+];
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -62,16 +81,17 @@ export default function MapScreen() {
   const [selectedPin, setSelectedPin] = useState<MapPin | null>(null);
   const [radiusKm, setRadiusKm] = useState(FEED_DEFAULT_RADIUS_KM);
   const [showSearchHere, setShowSearchHere] = useState(false);
-  const [searchCenter, setSearchCenter] = useState<[number, number] | null>(null);
+  const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null);
 
-  const cameraRef = useRef<MapboxGL.Camera>(null);
+  const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const searchBtnOpacity = useRef(new Animated.Value(0)).current;
+  const lastRegionRef = useRef<Region | null>(null);
 
   const lat = location?.lat ?? 41.8781;
   const lng = location?.lng ?? -87.6298;
-  const queryLat = searchCenter ? searchCenter[1] : lat;
-  const queryLng = searchCenter ? searchCenter[0] : lng;
+  const queryLat = searchCenter?.lat ?? lat;
+  const queryLng = searchCenter?.lng ?? lng;
 
   const { data: pinsData, isFetching } = useMapPins(queryLat, queryLng, radiusKm);
   const allPins: MapPin[] = pinsData?.pages.flatMap((p: any) => p.data ?? p) ?? [];
@@ -85,26 +105,6 @@ export default function MapScreen() {
     );
   }, [allPins, activeCategory]);
 
-  const geoJson: GeoJSON.FeatureCollection = useMemo(() => ({
-    type: 'FeatureCollection',
-    features: pins.map((pin) => ({
-      type: 'Feature',
-      id: pin.id,
-      geometry: { type: 'Point', coordinates: [pin.location.lng, pin.location.lat] },
-      properties: {
-        id: pin.id,
-        name: pin.name,
-        type: pin.type,
-        mainCategory: pin.mainCategory ?? 'connect',
-        isFeatured: pin.isFeatured ?? false,
-        color:
-          pin.type === ContentType.EVENT
-            ? CATEGORY_PIN_COLORS.event
-            : CATEGORY_PIN_COLORS[pin.mainCategory ?? 'connect'] ?? '#D4A853',
-      },
-    })),
-  }), [pins]);
-
   useEffect(() => {
     screen('Map');
     track('map_opened');
@@ -115,35 +115,15 @@ export default function MapScreen() {
     track('map_category_filtered', { category: cat ?? 'all' });
   }, []);
 
-  const handlePinPress = useCallback((event: any) => {
-    const feature = event?.features?.[0];
-    if (!feature) return;
-
-    // Cluster tap — zoom in
-    if (feature.properties?.cluster) {
-      const [clngCoord, clatCoord] = feature.geometry.coordinates;
-      cameraRef.current?.setCamera({
-        centerCoordinate: [clngCoord, clatCoord],
-        zoomLevel: 14,
-        animationMode: 'flyTo',
-        animationDuration: 600,
-      });
-      return;
-    }
-
-    const pinId = feature.properties?.id;
-    const pin = allPins.find((p) => p.id === pinId);
-    if (!pin) return;
-
+  const handlePinPress = useCallback((pin: MapPin) => {
     setSelectedPin(pin);
     sheetRef.current?.snapToIndex(0);
     track('map_pin_tapped', { pinType: pin.type, pinId: pin.id });
-  }, [allPins]);
+  }, []);
 
-  const handleCameraChanged = useCallback((state: any) => {
-    const center = state?.properties?.center;
-    if (!center) return;
-    const dist = haversineKm(lat, lng, center[1], center[0]);
+  const handleRegionChangeComplete = useCallback((region: Region) => {
+    lastRegionRef.current = region;
+    const dist = haversineKm(lat, lng, region.latitude, region.longitude);
     if (dist > 2 && !showSearchHere) {
       setShowSearchHere(true);
       Animated.timing(searchBtnOpacity, { toValue: 1, duration: 300, useNativeDriver: true }).start();
@@ -153,22 +133,19 @@ export default function MapScreen() {
     }
   }, [lat, lng, showSearchHere, searchBtnOpacity]);
 
-  const handleSearchHere = useCallback(async () => {
-    const cam = await (cameraRef.current as any)?.getCamera?.();
-    if (cam?.centerCoordinate) {
-      setSearchCenter(cam.centerCoordinate);
+  const handleSearchHere = useCallback(() => {
+    if (lastRegionRef.current) {
+      setSearchCenter({ lat: lastRegionRef.current.latitude, lng: lastRegionRef.current.longitude });
     }
     setShowSearchHere(false);
     Animated.timing(searchBtnOpacity, { toValue: 0, duration: 200, useNativeDriver: true }).start();
   }, [searchBtnOpacity]);
 
   const flyToUser = useCallback(() => {
-    cameraRef.current?.setCamera({
-      centerCoordinate: [lng, lat],
-      zoomLevel: 13,
-      animationMode: 'flyTo',
-      animationDuration: 800,
-    });
+    mapRef.current?.animateToRegion(
+      { latitude: lat, longitude: lng, latitudeDelta: 0.05, longitudeDelta: 0.05 },
+      800,
+    );
   }, [lat, lng]);
 
   const distanceLabel = selectedPin
@@ -179,68 +156,48 @@ export default function MapScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#0D0D0D' }}>
-      <MapboxGL.MapView
+      <MapView
+        ref={mapRef}
         style={{ flex: 1 }}
-        styleURL={process.env.EXPO_PUBLIC_MAPBOX_STYLE ?? MapboxGL.StyleURL.Dark}
-        logoEnabled={false}
-        attributionEnabled={false}
-        compassEnabled
-        onCameraChanged={handleCameraChanged}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+        customMapStyle={DARK_MAP_STYLE}
+        initialRegion={{
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: 0.08,
+          longitudeDelta: 0.08,
+        }}
+        showsUserLocation
+        showsMyLocationButton={false}
+        showsCompass
+        onRegionChangeComplete={handleRegionChangeComplete}
       >
-        <MapboxGL.Camera
-          ref={cameraRef}
-          centerCoordinate={[lng, lat]}
-          zoomLevel={12}
-          animationMode="flyTo"
-        />
-        <MapboxGL.UserLocation visible animated />
-
-        {geoJson.features.length > 0 && (
-          <MapboxGL.ShapeSource
-            id="content-pins"
-            shape={geoJson}
-            cluster
-            clusterRadius={50}
-            clusterMaxZoomLevel={13}
-            onPress={handlePinPress}
-          >
-            {/* Cluster circles */}
-            <MapboxGL.CircleLayer
-              id="cluster-circle"
-              filter={['has', 'point_count']}
-              style={{
-                circleRadius: ['step', ['get', 'point_count'], 20, 10, 28, 50, 36],
-                circleColor: '#1A1A1A',
-                circleStrokeWidth: 2,
-                circleStrokeColor: '#D4A853',
-              }}
-            />
-            {/* Cluster count */}
-            <MapboxGL.SymbolLayer
-              id="cluster-count"
-              filter={['has', 'point_count']}
-              style={{
-                textField: '{point_count_abbreviated}',
-                textSize: 13,
-                textColor: '#D4A853',
-                textFont: ['DIN Offc Pro Medium', 'Arial Unicode MS Regular'],
-              }}
-            />
-            {/* Individual pins */}
-            <MapboxGL.CircleLayer
-              id="pins-circle"
-              filter={['!', ['has', 'point_count']]}
-              style={{
-                circleRadius: ['case', ['get', 'isFeatured'], 10, 7],
-                circleColor: ['get', 'color'],
-                circleStrokeWidth: ['case', ['get', 'isFeatured'], 2, 1],
-                circleStrokeColor: '#0D0D0D',
-                circleOpacity: 0.95,
-              }}
-            />
-          </MapboxGL.ShapeSource>
-        )}
-      </MapboxGL.MapView>
+        {pins.map((pin) => {
+          const color =
+            pin.type === ContentType.EVENT
+              ? CATEGORY_PIN_COLORS.event
+              : CATEGORY_PIN_COLORS[pin.mainCategory ?? 'connect'] ?? '#D4A853';
+          return (
+            <Marker
+              key={pin.id}
+              coordinate={{ latitude: pin.location.lat, longitude: pin.location.lng }}
+              onPress={() => handlePinPress(pin)}
+              tracksViewChanges={false}
+            >
+              <View
+                style={{
+                  width: pin.isFeatured ? 20 : 14,
+                  height: pin.isFeatured ? 20 : 14,
+                  borderRadius: 999,
+                  backgroundColor: color,
+                  borderWidth: pin.isFeatured ? 2 : 1,
+                  borderColor: '#0D0D0D',
+                }}
+              />
+            </Marker>
+          );
+        })}
+      </MapView>
 
       {/* Category filter pills + location button */}
       <SafeAreaView
@@ -281,7 +238,6 @@ export default function MapScreen() {
             ))}
           </ScrollView>
 
-          {/* Current location button */}
           <TouchableOpacity
             onPress={flyToUser}
             style={{
@@ -347,7 +303,6 @@ export default function MapScreen() {
         <BottomSheetScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }}>
           {selectedPin ? (
             <>
-              {/* Mini card */}
               {(selectedPin as any).thumbnailUrl && (
                 <Image
                   source={{ uri: (selectedPin as any).thumbnailUrl }}
@@ -389,7 +344,6 @@ export default function MapScreen() {
               </TouchableOpacity>
             </>
           ) : (
-            /* Default closed state — radius controls */
             <View style={{ paddingTop: 8 }}>
               <Text style={{ color: '#F5F5F5', fontWeight: '700', fontSize: 16, marginBottom: 12 }}>
                 Search Radius

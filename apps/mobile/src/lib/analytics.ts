@@ -12,21 +12,21 @@ export function initPostHog() {
 
   _client = new PostHog(process.env.EXPO_PUBLIC_POSTHOG_KEY, {
     host: 'https://app.posthog.com',
-    captureAppLifecycleEvents: true,
+    captureNativeAppLifecycleEvents: true,
   });
 
   return _client;
 }
 
-export function identify(userId: string, properties?: Record<string, unknown>) {
+export function identify(userId: string, properties?: Record<string, any>) {
   _client?.identify(userId, properties);
 }
 
-export function track(event: string, properties?: Record<string, unknown>) {
+export function track(event: string, properties?: Record<string, any>) {
   _client?.capture(event, properties);
 }
 
-export function screen(name: string, properties?: Record<string, unknown>) {
+export function screen(name: string, properties?: Record<string, any>) {
   _client?.screen(name, properties);
 }
 

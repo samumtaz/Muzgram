@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ListingsModule } from '../listings/listings.module';
+import { ListingEntity } from '../../database/entities/listing.entity';
 import { ProvidersController } from './providers.controller';
 import { ProvidersService } from './providers.service';
 
-// Service providers (Connect tab) are a filtered view of Listings
-// with mainCategory = 'connect'. No separate entities needed.
 @Module({
-  imports: [ListingsModule],
+  imports: [TypeOrmModule.forFeature([ListingEntity])],
   controllers: [ProvidersController],
   providers: [ProvidersService],
 })

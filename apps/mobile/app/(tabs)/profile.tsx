@@ -89,6 +89,7 @@ export default function ProfileScreen() {
           {[
             { label: 'My Saves', emoji: '♥', route: '/saves' },
             { label: 'My Posts', emoji: '✏️', route: '/my-posts' },
+            { label: 'Settings', emoji: '⚙', route: '/settings' },
           ].map((item) => (
             <TouchableOpacity
               key={item.label}

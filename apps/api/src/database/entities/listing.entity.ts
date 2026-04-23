@@ -136,6 +136,19 @@ export class ListingEntity {
   @Column({ type: 'varchar', nullable: true })
   importedFrom: string | null;
 
+  @Index({ unique: true, where: 'external_id IS NOT NULL' })
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  externalId: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true, default: 'manual' })
+  source: string | null;
+
+  @Column({ type: 'decimal', precision: 3, scale: 1, nullable: true })
+  rating: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  ratingCount: number | null;
+
   @OneToMany(() => DailySpecialEntity, (special) => special.listing)
   dailySpecials: DailySpecialEntity[];
 

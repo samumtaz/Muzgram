@@ -73,20 +73,20 @@ export function useSearchSuggestions(query: string) {
 
 export function useSearch(query: string, type: string = 'all') {
   const token = useAuthStore((s) => s.token);
-  const { cityId, location } = useLocationStore();
+  const { citySlug, location } = useLocationStore();
 
   return useQuery({
-    queryKey: searchKeys.results(query, cityId ?? '', type),
+    queryKey: searchKeys.results(query, citySlug ?? '', type),
     queryFn: () => {
       const params = new URLSearchParams({
         q: query,
-        city_id: cityId ?? '',
+        city_slug: citySlug ?? '',
         ...(type !== 'all' ? { category: type } : {}),
         ...(location ? { lat: location.lat.toString(), lng: location.lng.toString() } : {}),
       });
       return api.get<SearchResponse>(`/v1/search?${params}`, { token: token ?? undefined });
     },
-    enabled: query.length >= 2 && !!cityId,
+    enabled: query.length >= 2 && !!citySlug,
     staleTime: 60_000,
   });
 }

@@ -11,7 +11,8 @@ export class SearchController {
   @Get()
   async search(
     @Query('q') q: string,
-    @Query('city_id') cityId: string,
+    @Query('city_id') cityId?: string,
+    @Query('city_slug') citySlug?: string,
     @Query('category') category?: string,
     @Query('lat') lat?: string,
     @Query('lng') lng?: string,
@@ -30,11 +31,24 @@ export class SearchController {
     return this.searchService.search({
       q: q.slice(0, 100),
       cityId,
+      citySlug,
       category,
       lat: lat ? parseFloat(lat) : undefined,
       lng: lng ? parseFloat(lng) : undefined,
       radiusMeters: radiusMeters ? parseInt(radiusMeters, 10) : undefined,
       limit: limit ? parseInt(limit, 10) : undefined,
     });
+  }
+
+  @Get('suggest')
+  async suggest(
+    @Query('q') q: string,
+    @Query('city_id') cityId?: string,
+    @Query('city_slug') citySlug?: string,
+  ) {
+    if (!q || q.length < 1) {
+      return { suggestions: [] };
+    }
+    return this.searchService.suggest(q.slice(0, 50), cityId, citySlug);
   }
 }

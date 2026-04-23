@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'expo-router';
-import { FlashList } from '@shopify/flash-list';
+import { FlashList, FlashListRef } from '@shopify/flash-list';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -44,7 +44,7 @@ export default function FeedScreen() {
   const { location } = useLocationStore();
   const toggleSave = useToggleSave();
   const router = useRouter();
-  const listRef = useRef<FlashList<FeedItem>>(null);
+  const listRef = useRef<FlashListRef<FeedItem>>(null);
 
   useLocationPermission();
 
@@ -142,7 +142,6 @@ export default function FeedScreen() {
           ref={listRef}
           data={allItems}
           renderItem={renderItem}
-          estimatedItemSize={280}
           keyExtractor={(item) => `${item.itemType}-${item.id}`}
           contentContainerStyle={{ paddingBottom: 20 }}
           refreshControl={

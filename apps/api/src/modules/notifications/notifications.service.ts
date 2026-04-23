@@ -11,7 +11,7 @@ import { NOTIFICATION } from '@muzgram/constants';
 import { NotificationEntity } from '../../database/entities/notification.entity';
 import { NotificationLogEntity } from '../../database/entities/notification-log.entity';
 import { UserEntity } from '../../database/entities/user.entity';
-import { NOTIFICATION_QUEUE } from './notifications.module';
+import { NOTIFICATION_QUEUE } from './notifications.constants';
 
 interface SendNotificationInput {
   recipientId: string;
@@ -92,6 +92,7 @@ export class NotificationsService {
     // Enqueue push delivery to worker
     await this.queue.add('send-push', {
       notificationId: notification.id,
+      idempotencyKey: input.idempotencyKey,
       recipientId: input.recipientId,
       expoPushToken: user.expoPushToken,
       title: input.title,
@@ -113,5 +114,45 @@ export class NotificationsService {
       order: { createdAt: 'DESC' },
       take: 30,
     });
+  }
+
+  async getUserNotificationsPaged(userId: string, cursor?: string, limit = 30) {
+    const take = Math.min(limit, 50);
+    const qb = this.notifRepo
+      .createQueryBuilder('n')
+      .where('n.recipientId = :userId', { userId })
+      .orderBy('n.createdAt', 'DESC')
+      .take(take + 1);
+
+    if (cursor) {
+      const decoded = Buffer.from(cursor, 'base64').toString('utf8');
+      const { createdAt } = JSON.parse(decoded) as { createdAt: string };
+      qb.andWhere('n.createdAt < :createdAt', { createdAt });
+    }
+
+    const [rows, unreadCount] = await Promise.all([
+      qb.getMany(),
+      this.notifRepo.count({ where: { recipientId: userId, isRead: false } }),
+    ]);
+
+    const hasMore = rows.length > take;
+    const data = rows.slice(0, take);
+    const nextCursor =
+      hasMore && data.length > 0
+        ? Buffer.from(JSON.stringify({ createdAt: data[data.length - 1].createdAt })).toString('base64')
+        : null;
+
+    return {
+      data,
+      meta: { cursor: nextCursor, hasMore },
+      unreadCount,
+    };
+  }
+
+  async markAllRead(userId: string): Promise<void> {
+    await this.notifRepo.update(
+      { recipientId: userId, isRead: false },
+      { isRead: true, readAt: new Date() },
+    );
   }
 }

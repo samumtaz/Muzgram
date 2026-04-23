@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
@@ -6,6 +6,8 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ContentType, ReportReason } from '@muzgram/types';
 
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { AdminGuard } from '../../common/guards/admin.guard';
+import { ClerkAuthGuard } from '../../common/guards/clerk-auth.guard';
 import { UserEntity } from '../../database/entities/user.entity';
 import { ModerationService } from './moderation.service';
 
@@ -47,6 +49,7 @@ export class ModerationController {
   constructor(private readonly moderationService: ModerationService) {}
 
   @Post('report')
+  @UseGuards(ClerkAuthGuard)
   @ApiOperation({ summary: 'Submit a report on a listing, event, or post' })
   report(@Body() dto: SubmitReportDto, @CurrentUser() user: UserEntity) {
     return this.moderationService.submitReport(
@@ -58,14 +61,15 @@ export class ModerationController {
     );
   }
 
-  // Admin-only endpoints — in production, guard with an admin role check
   @Get('queue')
+  @UseGuards(ClerkAuthGuard, AdminGuard)
   @ApiOperation({ summary: '[ADMIN] Get all pending content awaiting review' })
   getQueue() {
     return this.moderationService.getPendingContent();
   }
 
   @Post('review')
+  @UseGuards(ClerkAuthGuard, AdminGuard)
   @ApiOperation({ summary: '[ADMIN] Approve or reject a content item' })
   review(@Body() dto: ReviewContentDto, @CurrentUser() user: UserEntity) {
     if (dto.action === 'approve') {

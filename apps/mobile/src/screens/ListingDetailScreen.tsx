@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ContentType, HalalCertification } from '@muzgram/types';
+import { BusinessHours, ContentType, HalalCertification } from '@muzgram/types';
 import { formatDistanceLabel, isOpenNow } from '@muzgram/utils';
 import { useToggleSave } from '../queries/feed.queries';
 import { useListing } from '../queries/listings.queries';
@@ -47,7 +47,7 @@ function midnightCountdown() {
   return h > 0 ? `${h}h ${m}m left` : `${m}m left`;
 }
 
-function getOpenStatus(hours: Record<string, any> | undefined) {
+function getOpenStatus(hours: BusinessHours | undefined) {
   if (!hours) return null;
   const open = isOpenNow(hours);
   const today = DAY_LABELS[new Date().getDay()];

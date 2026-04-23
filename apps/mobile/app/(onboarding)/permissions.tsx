@@ -6,11 +6,13 @@ import * as Notifications from 'expo-notifications';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuthStore } from '../../src/stores/auth.store';
 import { useLocationStore } from '../../src/stores/location.store';
 
 export default function PermissionsScreen() {
   const router = useRouter();
   const setLocation = useLocationStore((s) => s.setLocation);
+  const setOnboardingComplete = useAuthStore((s) => s.setOnboardingComplete);
   const [locationGranted, setLocationGranted] = useState(false);
   const [notifGranted, setNotifGranted] = useState(false);
   const [requesting, setRequesting] = useState<'location' | 'notif' | null>(null);
@@ -40,6 +42,7 @@ export default function PermissionsScreen() {
   }
 
   function handleFinish() {
+    setOnboardingComplete();
     router.replace('/(tabs)');
   }
 

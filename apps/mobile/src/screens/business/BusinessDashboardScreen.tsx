@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 import { useRouter } from 'expo-router';
-import { WebBrowser } from 'expo-web-browser';
 import { FlashList } from '@shopify/flash-list';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -50,7 +50,7 @@ export function BusinessDashboardScreen() {
         product: 'featured_placement',
         interval: 'month',
       });
-      await WebBrowser.openBrowserAsync(result.url);
+      await Linking.openURL(result.url);
     } catch {
       Alert.alert('Error', 'Could not open checkout. Please try again.');
     }
@@ -226,7 +226,6 @@ export function BusinessDashboardScreen() {
             <FlashList
               data={leads}
               renderItem={({ item }) => <LeadCard lead={item} />}
-              estimatedItemSize={80}
               keyExtractor={(item) => item.id}
               contentContainerStyle={{ paddingTop: 4, paddingBottom: 24 }}
             />
