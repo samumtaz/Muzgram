@@ -9,6 +9,7 @@ export const eventKeys = {
   detail: (id: string) => ['events', id] as const,
   slug: (slug: string) => ['events', 'slug', slug] as const,
   nearby: (cityId: string) => ['events', 'nearby', cityId] as const,
+  atListing: (listingId: string) => ['events', 'listing', listingId] as const,
 };
 
 export function useEvent(id: string) {
@@ -30,6 +31,19 @@ export function useNearbyEvents(cityId: string | undefined) {
         token: token ?? undefined,
       }),
     enabled: !!cityId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useListingEvents(listingId: string | undefined) {
+  const token = useAuthStore((s) => s.token);
+  return useQuery({
+    queryKey: eventKeys.atListing(listingId ?? ''),
+    queryFn: () =>
+      api.get<CursorPage<Event>>(`/events?listingId=${listingId}&limit=3`, {
+        token: token ?? undefined,
+      }),
+    enabled: !!listingId,
     staleTime: 5 * 60 * 1000,
   });
 }
