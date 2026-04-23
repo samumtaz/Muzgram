@@ -100,7 +100,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             HERO
         ───────────────────────────────────────────────────────────────── */}
-        <section className="relative h-[calc(100svh)] bg-background overflow-hidden flex flex-col">
+        <section className="relative md:h-[100svh] bg-background overflow-hidden flex flex-col">
 
           {/* Aurora blobs */}
           <div className="pointer-events-none absolute inset-0">
@@ -173,10 +173,96 @@ export default async function HomePage() {
                 Your community.
               </h1>
 
-              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-4 md:mb-6 max-w-lg mx-auto md:mx-0">
+              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-5 md:mb-6 max-w-lg mx-auto md:mx-0">
                 The spots your crew actually goes to. The events worth leaving the house for.
                 Built for your community, finally.
               </p>
+
+              {/* Mobile phone preview — between subtext and CTAs */}
+              <div className="md:hidden flex justify-center mb-5">
+                <div className="relative" style={{ width: 220 }}>
+                  {/* Glow */}
+                  <div className="absolute inset-0 rounded-[42px] pointer-events-none" style={{ boxShadow: '0 0 60px rgba(212,168,83,0.18)', filter: 'blur(12px)' }} />
+                  {/* Phone frame */}
+                  <div className="relative overflow-hidden rounded-[42px]" style={{ border: '3px solid #3a3a3a', background: '#0d0d0d', boxShadow: '0 0 0 1px #1a1a1a, 0 32px 80px rgba(0,0,0,0.9)' }}>
+                    {/* Dynamic Island */}
+                    <div className="bg-black pt-2.5 pb-0 flex justify-center">
+                      <div className="flex items-center justify-center gap-2 px-3" style={{ height: 28, minWidth: 100, background: '#000', borderRadius: 16, border: '1px solid #1a1a1a' }}>
+                        <div className="rounded-full" style={{ width: 10, height: 10, background: '#0a0a0a', border: '1px solid #222' }} />
+                        <div style={{ width: 3, height: 3, borderRadius: '50%', background: '#1a1a1a' }} />
+                      </div>
+                    </div>
+                    {/* Screen */}
+                    <div className="bg-[#0D0D0D] px-3 pt-2 pb-4 space-y-2.5">
+                      {/* Status */}
+                      <div className="flex items-center justify-between px-1 text-[9px] font-semibold" style={{ color: '#888' }}>
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <div className="flex items-end gap-0.5 h-2.5">
+                            {[2, 4, 6, 8].map((h, i) => <div key={i} style={{ width: 2.5, height: h, background: i < 3 ? '#888' : '#444', borderRadius: 1 }} />)}
+                          </div>
+                          <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current text-[#888]"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.237 4.237 0 0 0-6 0zm-4-4 2 2a7.074 7.074 0 0 1 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                          <div style={{ width: 18, height: 9, borderRadius: 2, border: '1px solid #666', padding: 1 }}><div style={{ width: '80%', height: '100%', background: '#888', borderRadius: 1 }} /></div>
+                        </div>
+                      </div>
+                      {/* App header */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-brand-gold font-bold text-base tracking-tight">Muzgram</span>
+                        <div className="flex gap-1">
+                          <div className="w-7 h-7 rounded-full bg-surface-elevated flex items-center justify-center text-xs">🔔</div>
+                          <div className="w-7 h-7 rounded-full bg-surface-elevated flex items-center justify-center text-xs">👤</div>
+                        </div>
+                      </div>
+                      {/* Location */}
+                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
+                        <span className="text-brand-gold text-xs">📍</span>
+                        <span className="text-text-secondary text-[10px] font-medium">Chicago, IL</span>
+                        <span className="ml-auto text-text-muted text-[9px]">▼</span>
+                      </div>
+                      {/* Featured card */}
+                      <div className="rounded-xl overflow-hidden">
+                        <div className="h-16 flex flex-col items-center justify-center gap-0.5" style={{ background: 'linear-gradient(135deg, rgba(212,168,83,0.22) 0%, rgba(160,50,20,0.28) 100%)' }}>
+                          <div className="text-2xl">🎉</div>
+                          <div className="text-brand-gold text-[7px] font-bold uppercase tracking-widest">Featured Event</div>
+                        </div>
+                        <div className="p-2" style={{ background: '#1a1a1a' }}>
+                          <div className="text-brand-gold text-[8px] font-bold uppercase tracking-wide">Fri, May 2 · 7:00 PM</div>
+                          <div className="text-text-primary text-[10px] font-semibold mt-0.5">Eid Celebration Night</div>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-text-muted text-[8px]">Navy Pier · Chicago</span>
+                            <span className="text-emerald-400 text-[8px] font-bold bg-emerald-900/40 px-1.5 py-0.5 rounded-full">Free</span>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Spots row */}
+                      <div className="flex gap-1.5">
+                        {[{ emoji: '🥗', name: 'The Halal Guys', color: 'rgba(34,197,94,0.12)' }, { emoji: '🍖', name: 'Shawarma Palace', color: 'rgba(249,115,22,0.12)' }, { emoji: '☕', name: 'Gold Brew', color: 'rgba(212,168,83,0.12)' }].map((s, i) => (
+                          <div key={i} className="flex-1 rounded-xl overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #252525' }}>
+                            <div className="h-8 flex items-center justify-center text-sm" style={{ background: s.color }}>{s.emoji}</div>
+                            <div className="p-1"><div className="text-text-primary text-[7px] font-semibold truncate">{s.name}</div></div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Tab bar */}
+                      <div className="flex justify-around items-center pt-2" style={{ borderTop: '1px solid #1e1e1e' }}>
+                        {[{ icon: '⌂', label: 'Home', active: true }, { icon: '🗺', label: 'Map' }, { icon: '＋', special: true }, { icon: '🔔', label: 'Alerts' }, { icon: '👤', label: 'Me' }].map((tab, i) => (
+                          <div key={i} className="flex flex-col items-center gap-0.5">
+                            {tab.special ? (
+                              <div className="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center text-text-inverse font-bold text-sm" style={{ boxShadow: '0 0 12px rgba(212,168,83,0.5)' }}>＋</div>
+                            ) : (
+                              <>
+                                <span className={`text-sm ${tab.active ? 'opacity-100' : 'opacity-25'}`}>{tab.icon}</span>
+                                <span className={`text-[6px] ${tab.active ? 'text-brand-gold' : 'text-text-muted'}`}>{tab.label}</span>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex justify-center pt-0.5"><div className="w-16 h-0.5 rounded-full" style={{ background: '#333' }} /></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-4 md:mb-6">
