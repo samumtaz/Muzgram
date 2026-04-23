@@ -135,13 +135,13 @@ export default async function HomePage() {
           />
 
           {/* Content — flex-1 so it fills all space above the ticker */}
-          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid md:grid-cols-2 gap-8 items-center pt-2 pb-4 md:py-8 overflow-hidden">
+          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid md:grid-cols-2 gap-8 items-start md:items-center pt-6 pb-2 md:py-8 overflow-hidden">
 
             {/* LEFT — copy */}
             <div className="text-center md:text-left">
 
               {/* Live badge */}
-              <div className="inline-flex items-center gap-2.5 rounded-pill px-4 py-2 mb-8 text-sm font-semibold"
+              <div className="inline-flex items-center gap-2.5 rounded-pill px-4 py-2 mb-4 md:mb-8 text-sm font-semibold"
                 style={{
                   background: 'rgba(212,168,83,0.08)',
                   border: '1px solid rgba(212,168,83,0.35)',
@@ -173,13 +173,13 @@ export default async function HomePage() {
                 Your community.
               </h1>
 
-              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-6 max-w-lg mx-auto md:mx-0">
+              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-4 md:mb-6 max-w-lg mx-auto md:mx-0">
                 The spots your crew actually goes to. The events worth leaving the house for.
                 Built for your community, finally.
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-6">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-4 md:mb-6">
                 <a
                   href="https://apps.apple.com/app/muzgram/id0000000000?utm_source=web&utm_medium=hero"
                   className="group relative flex items-center justify-center gap-3 font-bold px-7 py-4 rounded-pill text-text-inverse overflow-hidden"
@@ -491,9 +491,9 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Ticker — above phone peek, so Safari bar covers peek not ticker */}
+          {/* Ticker — desktop only (stays pinned to bottom of hero) */}
           <div
-            className="relative overflow-hidden border-t border-surface-border flex-shrink-0 z-10"
+            className="hidden md:block relative overflow-hidden border-t border-surface-border flex-shrink-0 z-10"
             style={{
               background: 'rgba(10,10,10,0.90)',
               backdropFilter: 'blur(8px)',
@@ -507,45 +507,23 @@ export default async function HomePage() {
               </span>
             </div>
           </div>
-
-          {/* Mobile phone peek — BELOW ticker, so Safari bar overlaps this, not the ticker */}
-          <div className="md:hidden flex-shrink-0 flex justify-center overflow-hidden" style={{ height: 88 }}>
-            <div
-              className="relative w-[260px] overflow-hidden rounded-t-[38px] pointer-events-none"
-              style={{
-                border: '3px solid #3a3a3a',
-                borderBottom: 'none',
-                background: '#0d0d0d',
-                boxShadow: '0 -16px 48px rgba(212,168,83,0.12)',
-              }}
-            >
-              <div className="flex justify-around items-end px-4 pt-3 pb-2" style={{ borderTop: '1px solid #1e1e1e' }}>
-                {[
-                  { icon: '⌂', label: 'Home', active: true },
-                  { icon: '🗺', label: 'Map', active: false },
-                  { icon: '＋', special: true },
-                  { icon: '🔔', label: 'Alerts', active: false },
-                  { icon: '👤', label: 'Me', active: false },
-                ].map((tab, i) => (
-                  <div key={i} className="flex flex-col items-center gap-0.5">
-                    {tab.special ? (
-                      <div className="w-9 h-9 rounded-full bg-brand-gold flex items-center justify-center text-text-inverse font-bold" style={{ boxShadow: '0 0 12px rgba(212,168,83,0.5)' }}>＋</div>
-                    ) : (
-                      <>
-                        <span className={`text-sm ${tab.active ? 'opacity-100' : 'opacity-25'}`}>{tab.icon}</span>
-                        <span className={`text-[7px] ${tab.active ? 'text-brand-gold' : 'text-text-muted'}`}>{tab.label}</span>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-center pt-1">
-                <div className="w-20 h-1 rounded-full" style={{ background: '#333' }} />
-              </div>
-              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[#0d0d0d] to-transparent" />
-            </div>
-          </div>
         </section>
+
+        {/* Ticker — mobile only, right after hero, always fully visible */}
+        <div
+          className="md:hidden relative overflow-hidden border-y border-surface-border z-10"
+          style={{
+            background: 'rgba(10,10,10,0.95)',
+            paddingTop: '11px',
+            paddingBottom: '11px',
+          }}
+        >
+          <div className="flex animate-marquee whitespace-nowrap select-none">
+            <span className="text-text-muted text-xs font-medium tracking-widest uppercase">
+              {tickerText}&nbsp;&nbsp;·&nbsp;&nbsp;{tickerText}
+            </span>
+          </div>
+        </div>
 
 
 
