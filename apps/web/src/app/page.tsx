@@ -135,10 +135,10 @@ export default async function HomePage() {
           />
 
           {/* Content — flex-1 so it fills all space above the ticker */}
-          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-8 items-center pt-2 pb-4 lg:py-8 overflow-hidden">
+          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid md:grid-cols-2 gap-8 items-center pt-2 pb-4 md:py-8 overflow-hidden">
 
             {/* LEFT — copy */}
-            <div className="text-center lg:text-left">
+            <div className="text-center md:text-left">
 
               {/* Live badge */}
               <div className="inline-flex items-center gap-2.5 rounded-pill px-4 py-2 mb-8 text-sm font-semibold"
@@ -173,13 +173,13 @@ export default async function HomePage() {
                 Your community.
               </h1>
 
-              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-6 max-w-lg mx-auto lg:mx-0">
+              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-6 max-w-lg mx-auto md:mx-0">
                 The spots your crew actually goes to. The events worth leaving the house for.
                 Built for your community, finally.
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-6">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-6">
                 <a
                   href="https://apps.apple.com/app/muzgram/id0000000000?utm_source=web&utm_medium=hero"
                   className="group relative flex items-center justify-center gap-3 font-bold px-7 py-4 rounded-pill text-text-inverse overflow-hidden"
@@ -201,7 +201,7 @@ export default async function HomePage() {
               </div>
 
               {/* Social proof */}
-              <div className="flex items-center gap-5 justify-center lg:justify-start text-xs text-text-muted">
+              <div className="flex items-center gap-5 justify-center md:justify-start text-xs text-text-muted">
                 <span className="flex items-center gap-1.5">
                   <span style={{ color: '#D4A853' }}>★★★★★</span> Beta launch
                 </span>
@@ -212,49 +212,8 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* RIGHT — Phone mockup: full on desktop, peeking sneak-peek on mobile */}
-            <div className="flex justify-center lg:justify-end relative">
-              {/* Mobile sneak-peek — bottom of phone rising from below fold */}
-              <div className="lg:hidden absolute -bottom-16 left-1/2 -translate-x-1/2 w-[260px] overflow-hidden rounded-t-[40px] pointer-events-none"
-                style={{
-                  boxShadow: '0 -20px 60px rgba(212,168,83,0.15)',
-                  border: '3px solid #3a3a3a',
-                  borderBottom: 'none',
-                  background: '#0d0d0d',
-                  height: 120,
-                }}
-              >
-                {/* Tab bar peek */}
-                <div className="flex justify-around items-end px-4 pt-3 pb-2" style={{ borderTop: '1px solid #1e1e1e' }}>
-                  {[
-                    { icon: '⌂', label: 'Home', active: true },
-                    { icon: '🗺', label: 'Map', active: false },
-                    { icon: '＋', label: '', special: true },
-                    { icon: '🔔', label: 'Alerts', active: false },
-                    { icon: '👤', label: 'Me', active: false },
-                  ].map((tab, i) => (
-                    <div key={i} className="flex flex-col items-center gap-0.5">
-                      {tab.special ? (
-                        <div className="w-9 h-9 rounded-full bg-brand-gold flex items-center justify-center text-text-inverse font-bold text-base" style={{ boxShadow: '0 0 12px rgba(212,168,83,0.5)' }}>＋</div>
-                      ) : (
-                        <>
-                          <span className={`text-sm ${tab.active ? 'opacity-100' : 'opacity-25'}`}>{tab.icon}</span>
-                          <span className={`text-[7px] ${tab.active ? 'text-brand-gold' : 'text-text-muted'}`}>{tab.label}</span>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-center pt-1">
-                  <div className="w-20 h-1 rounded-full" style={{ background: '#333' }} />
-                </div>
-                {/* Gradient fade up so it looks like it's peeking */}
-                <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-[#0d0d0d] to-transparent pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Desktop phone — full version */}
-            <div className="hidden lg:flex justify-end relative">
+            {/* Desktop phone — full version (hidden on mobile) */}
+            <div className="hidden md:flex justify-end relative">
 
               {/* Deep glow behind phone */}
               <div
@@ -532,20 +491,58 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Ticker — sits naturally at bottom because section is flex-col */}
+          {/* Ticker — above phone peek, so Safari bar covers peek not ticker */}
           <div
             className="relative overflow-hidden border-t border-surface-border flex-shrink-0 z-10"
             style={{
               background: 'rgba(10,10,10,0.90)',
               backdropFilter: 'blur(8px)',
               paddingTop: '10px',
-              paddingBottom: 'max(10px, env(safe-area-inset-bottom))',
+              paddingBottom: '10px',
             }}
           >
             <div className="flex animate-marquee whitespace-nowrap select-none">
               <span className="text-text-muted text-xs font-medium tracking-widest uppercase">
                 {tickerText}&nbsp;&nbsp;·&nbsp;&nbsp;{tickerText}
               </span>
+            </div>
+          </div>
+
+          {/* Mobile phone peek — BELOW ticker, so Safari bar overlaps this, not the ticker */}
+          <div className="md:hidden flex-shrink-0 flex justify-center overflow-hidden" style={{ height: 88 }}>
+            <div
+              className="relative w-[260px] overflow-hidden rounded-t-[38px] pointer-events-none"
+              style={{
+                border: '3px solid #3a3a3a',
+                borderBottom: 'none',
+                background: '#0d0d0d',
+                boxShadow: '0 -16px 48px rgba(212,168,83,0.12)',
+              }}
+            >
+              <div className="flex justify-around items-end px-4 pt-3 pb-2" style={{ borderTop: '1px solid #1e1e1e' }}>
+                {[
+                  { icon: '⌂', label: 'Home', active: true },
+                  { icon: '🗺', label: 'Map', active: false },
+                  { icon: '＋', special: true },
+                  { icon: '🔔', label: 'Alerts', active: false },
+                  { icon: '👤', label: 'Me', active: false },
+                ].map((tab, i) => (
+                  <div key={i} className="flex flex-col items-center gap-0.5">
+                    {tab.special ? (
+                      <div className="w-9 h-9 rounded-full bg-brand-gold flex items-center justify-center text-text-inverse font-bold" style={{ boxShadow: '0 0 12px rgba(212,168,83,0.5)' }}>＋</div>
+                    ) : (
+                      <>
+                        <span className={`text-sm ${tab.active ? 'opacity-100' : 'opacity-25'}`}>{tab.icon}</span>
+                        <span className={`text-[7px] ${tab.active ? 'text-brand-gold' : 'text-text-muted'}`}>{tab.label}</span>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-center pt-1">
+                <div className="w-20 h-1 rounded-full" style={{ background: '#333' }} />
+              </div>
+              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-[#0d0d0d] to-transparent" />
             </div>
           </div>
         </section>
