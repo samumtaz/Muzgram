@@ -135,7 +135,7 @@ export default async function HomePage() {
           />
 
           {/* Content — flex-1 so it fills all space above the ticker */}
-          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-8 items-center py-8 overflow-hidden">
+          <div className="relative flex-1 min-h-0 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-8 items-center pt-2 pb-4 lg:py-8 overflow-hidden">
 
             {/* LEFT — copy */}
             <div className="text-center lg:text-left">
@@ -556,18 +556,18 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             STATS
         ───────────────────────────────────────────────────────────────── */}
-        <section className="py-10 md:py-16 bg-background">
+        <section className="py-8 md:py-14 bg-background">
           <div className="max-w-5xl mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 text-center">
               {[
-                { num: '400K+', label: 'Muslims in Chicago', icon: '🕌' },
+                { num: '400K+', label: 'Muslims in Chicago', icon: '👥' },
                 { num: 'Free',  label: 'Forever for users',  icon: '💛' },
                 { num: '1',     label: 'City. More coming.', icon: '🌆' },
                 { num: '∞',     label: 'Community vibes',    icon: '✨' },
               ].map((s) => (
                 <div
                   key={s.label}
-                  className="rounded-2xl p-6 border border-surface-border hover:border-brand-gold/30 transition-all duration-300 group"
+                  className="rounded-2xl p-4 md:p-6 border border-surface-border hover:border-brand-gold/30 transition-all duration-300 group"
                   style={{ background: 'rgba(26,26,26,0.5)', backdropFilter: 'blur(8px)' }}
                 >
                   <div className="text-3xl mb-2">{s.icon}</div>
@@ -594,9 +594,9 @@ export default async function HomePage() {
             LIVE FEED — real app content
         ───────────────────────────────────────────────────────────────── */}
         {hasContent && (
-          <section className="py-10 md:py-16 bg-background-elevated">
+          <section className="py-8 md:py-14 bg-background-elevated">
             <div className="max-w-7xl mx-auto px-4">
-              <div className="text-center mb-8 md:mb-14">
+              <div className="text-center mb-5 md:mb-10">
                 <div className="inline-flex items-center gap-2 rounded-pill px-4 py-1.5 mb-4 text-xs font-bold uppercase tracking-widest"
                   style={{ background: 'rgba(212,168,83,0.08)', border: '1px solid rgba(212,168,83,0.25)', color: '#D4A853' }}>
                   <span className="relative flex h-2 w-2">
@@ -703,7 +703,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             WHY MUZGRAM
         ───────────────────────────────────────────────────────────────── */}
-        <section className="py-12 md:py-20 bg-background relative overflow-hidden">
+        <section className="py-8 md:py-16 bg-background relative overflow-hidden">
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.03]"
             style={{
@@ -712,9 +712,9 @@ export default async function HomePage() {
             }}
           />
           <div className="relative max-w-7xl mx-auto px-4">
-            <div className="text-center mb-8 md:mb-14">
+            <div className="text-center mb-6 md:mb-12">
               <div className="text-brand-gold text-xs font-bold uppercase tracking-[0.2em] mb-3">Built different</div>
-              <h2 className="text-4xl sm:text-5xl font-bold text-text-primary">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary">
                 The app your community<br />
                 <span style={{
                   background: 'linear-gradient(135deg, #D4A853, #E8C87E)',
@@ -767,7 +767,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             COMING SOON CITIES
         ───────────────────────────────────────────────────────────────── */}
-        <section className="py-12 md:py-20 bg-background-elevated relative overflow-hidden">
+        <section className="py-8 md:py-16 bg-background-elevated relative overflow-hidden">
           {/* Background aurora */}
           <div
             className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 animate-aurora"
@@ -779,9 +779,9 @@ export default async function HomePage() {
           />
 
           <div className="relative max-w-7xl mx-auto px-4">
-            <div className="text-center mb-8 md:mb-14">
+            <div className="text-center mb-6 md:mb-12">
               <div className="text-brand-gold text-xs font-bold uppercase tracking-[0.2em] mb-3">We&apos;re just getting started</div>
-              <h2 className="text-4xl sm:text-5xl font-bold text-text-primary mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-3">
                 Chicago is first.<br />
                 <span style={{
                   background: 'linear-gradient(135deg, #D4A853, #E8C87E)',
@@ -864,7 +864,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             FOR BUSINESSES + ORGANIZERS
         ───────────────────────────────────────────────────────────────── */}
-        <section className="py-10 md:py-16 bg-background">
+        <section className="py-8 md:py-14 bg-background">
           <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-4 md:gap-5">
             {[
               {
@@ -909,7 +909,7 @@ export default async function HomePage() {
         {/* ─────────────────────────────────────────────────────────────────
             FINAL CTA
         ───────────────────────────────────────────────────────────────── */}
-        <section className="relative py-14 md:py-24 overflow-hidden bg-background">
+        <section className="relative py-10 md:py-20 overflow-hidden bg-background">
           {/* Gold radial glow */}
           <div
             className="pointer-events-none absolute inset-0 animate-glow-pulse"
