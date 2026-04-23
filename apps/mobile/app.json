@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0D0D0D"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.muzgram.app",
@@ -20,7 +22,8 @@
         "NSLocationWhenInUseUsageDescription": "Muzgram uses your location to show you halal restaurants, events, and businesses near you.",
         "NSLocationAlwaysUsageDescription": "Muzgram uses your location to show you nearby content.",
         "NSCameraUsageDescription": "Take photos to share with your community.",
-        "NSPhotoLibraryUsageDescription": "Share photos from your library."
+        "NSPhotoLibraryUsageDescription": "Share photos from your library.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -34,7 +37,9 @@
         "ACCESS_COARSE_LOCATION",
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -56,7 +61,9 @@
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#D4A853",
-          "sounds": ["./assets/sounds/notification.wav"]
+          "sounds": [
+            "./assets/sounds/notification.wav"
+          ]
         }
       ],
       "@rnmapbox/maps"
@@ -69,8 +76,12 @@
       "apiUrl": "",
       "mapboxAccessToken": "",
       "eas": {
-        "projectId": "your-eas-project-id"
+        "projectId": "bfebf288-11da-4edd-b79b-43b2abe27ec7"
+      },
+      "router": {
+        "origin": false
       }
-    }
+    },
+    "owner": "samumtaz"
   }
 }

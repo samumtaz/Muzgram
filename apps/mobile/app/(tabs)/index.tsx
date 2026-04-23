@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useAuth } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import {
@@ -21,6 +20,7 @@ import { FeedSkeleton } from '../../src/components/feed/FeedSkeleton';
 import { ListingCard } from '../../src/components/feed/ListingCard';
 import { CommunityPostCard } from '../../src/components/feed/CommunityPostCard';
 import { useLocationPermission } from '../../src/hooks/useLocationPermission';
+import { screen, track } from '../../src/lib/analytics';
 
 const CATEGORIES: { label: string; value: ListingMainCategory | undefined }[] = [
   { label: 'All', value: undefined },
@@ -29,15 +29,26 @@ const CATEGORIES: { label: string; value: ListingMainCategory | undefined }[] = 
   { label: 'Connect', value: ListingMainCategory.CONNECT },
 ];
 
+function interleaveFeatures(items: FeedItem[]): FeedItem[] {
+  if (items.length === 0) return items;
+  const featured = items.filter((i) => (i as any).isFeatured);
+  const rest = items.filter((i) => !(i as any).isFeatured);
+  const result = [...rest];
+  if (featured[0]) result.splice(0, 0, featured[0]);
+  if (featured[1] && result.length > 4) result.splice(3, 0, featured[1]);
+  return result;
+}
+
 export default function FeedScreen() {
   const [activeCategory, setActiveCategory] = useState<ListingMainCategory | undefined>(undefined);
   const { location } = useLocationStore();
   const toggleSave = useToggleSave();
   const router = useRouter();
+  const listRef = useRef<FlashList<FeedItem>>(null);
 
   useLocationPermission();
 
-  const lat = location?.lat ?? 41.8781; // Chicago fallback
+  const lat = location?.lat ?? 41.8781;
   const lng = location?.lng ?? -87.6298;
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage, refetch } = useFeed(
@@ -46,7 +57,19 @@ export default function FeedScreen() {
     activeCategory,
   );
 
-  const allItems: FeedItem[] = data?.pages.flatMap((p) => p.data) ?? [];
+  const rawItems: FeedItem[] = data?.pages.flatMap((p) => p.data) ?? [];
+  const allItems = interleaveFeatures(rawItems);
+
+  useEffect(() => {
+    screen('Feed');
+    track('feed_opened');
+  }, []);
+
+  const handleCategoryChange = useCallback((cat: ListingMainCategory | undefined) => {
+    setActiveCategory(cat);
+    track('feed_category_filtered', { category: cat ?? 'all' });
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
 
   const handleSave = useCallback(
     (contentType: ContentType, contentId: string) => {
@@ -56,12 +79,12 @@ export default function FeedScreen() {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: FeedItem }) => {
+    ({ item, index }: { item: FeedItem; index: number }) => {
       if (item.itemType === ContentType.LISTING) {
-        return <ListingCard listing={item as any} onSave={handleSave} />;
+        return <ListingCard listing={item as any} onSave={handleSave} position={index} />;
       }
       if (item.itemType === ContentType.EVENT) {
-        return <EventCard event={item as any} onSave={handleSave} />;
+        return <EventCard event={item as any} onSave={handleSave} position={index} />;
       }
       return <CommunityPostCard post={item as any} onSave={handleSave} />;
     },
@@ -88,7 +111,7 @@ export default function FeedScreen() {
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
             key={cat.label}
-            onPress={() => setActiveCategory(cat.value)}
+            onPress={() => handleCategoryChange(cat.value)}
             className={`px-4 py-2 rounded-pill border ${
               activeCategory === cat.value
                 ? 'bg-brand-gold border-brand-gold'
@@ -108,7 +131,7 @@ export default function FeedScreen() {
       </View>
 
       {/* Feed list */}
-      {allItems.length === 0 ? (
+      {!isLoading && allItems.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-text-secondary text-center text-base leading-6">
             Nothing near you yet.{'\n'}Check back soon — or add a spot you love.
@@ -116,9 +139,10 @@ export default function FeedScreen() {
         </View>
       ) : (
         <FlashList
+          ref={listRef}
           data={allItems}
           renderItem={renderItem}
-          estimatedItemSize={200}
+          estimatedItemSize={280}
           keyExtractor={(item) => `${item.itemType}-${item.id}`}
           contentContainerStyle={{ paddingBottom: 20 }}
           refreshControl={

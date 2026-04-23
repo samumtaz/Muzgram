@@ -1,17 +1,75 @@
+import { useEffect } from 'react';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withSequence,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 
-function SkeletonBox({ className }: { className: string }) {
-  return <View className={`bg-surface-DEFAULT rounded-card animate-pulse ${className}`} />;
+function SkeletonBox({
+  width,
+  height,
+  borderRadius = 8,
+  delay = 0,
+}: {
+  width: number | `${number}%`;
+  height: number;
+  borderRadius?: number;
+  delay?: number;
+}) {
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.3, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1,
+      false,
+    );
+  }, []);
+
+  const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+
+  return (
+    <Animated.View
+      style={[{ width, height, borderRadius, backgroundColor: '#2A2A2A' }, animStyle]}
+    />
+  );
 }
 
 function SkeletonCard() {
   return (
-    <View className="mx-4 mb-4 bg-surface-DEFAULT rounded-card overflow-hidden border border-surface-border">
-      <SkeletonBox className="w-full h-48" />
-      <View className="p-4 gap-2">
-        <SkeletonBox className="h-5 w-3/4" />
-        <SkeletonBox className="h-4 w-1/2" />
+    <View
+      style={{
+        marginHorizontal: 16,
+        marginBottom: 16,
+        backgroundColor: '#1A1A1A',
+        borderRadius: 12,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#2A2A2A',
+      }}
+    >
+      {/* Image — matches real card h-48 = 192px */}
+      <SkeletonBox width="100%" height={192} borderRadius={0} />
+      <View style={{ padding: 16, gap: 10 }}>
+        {/* Title + save icon row */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <SkeletonBox width="65%" height={18} />
+          <SkeletonBox width={24} height={24} borderRadius={12} />
+        </View>
+        {/* Meta pills row */}
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <SkeletonBox width={60} height={22} borderRadius={6} />
+          <SkeletonBox width={48} height={22} borderRadius={6} />
+          <SkeletonBox width={40} height={22} borderRadius={6} />
+        </View>
       </View>
     </View>
   );
@@ -19,18 +77,19 @@ function SkeletonCard() {
 
 export function FeedSkeleton() {
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
-      <View className="px-4 pt-2 pb-6">
-        <SkeletonBox className="h-7 w-32 mb-4" />
-        <View className="flex-row gap-2">
-          {[1, 2, 3].map((i) => (
-            <SkeletonBox key={i} className="h-8 w-16 rounded-pill" />
-          ))}
-        </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#0D0D0D' }} edges={['top']}>
+      {/* Header */}
+      <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 }}>
+        <SkeletonBox width={120} height={28} borderRadius={6} />
       </View>
-      {[1, 2, 3].map((i) => (
-        <SkeletonCard key={i} />
-      ))}
+      {/* Category pills */}
+      <View style={{ flexDirection: 'row', paddingHorizontal: 16, gap: 8, marginBottom: 12 }}>
+        {[64, 52, 72, 60].map((w, i) => (
+          <SkeletonBox key={i} width={w} height={34} borderRadius={999} />
+        ))}
+      </View>
+      {/* Cards */}
+      {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
     </SafeAreaView>
   );
 }
