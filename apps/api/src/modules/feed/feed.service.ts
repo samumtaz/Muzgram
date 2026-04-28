@@ -63,7 +63,7 @@ export class FeedService {
     const [listings, events, posts] = await Promise.all([
       this.queryListings(opts.lat, opts.lng, radiusMeters, opts.category),
       this.queryEvents(opts.lat, opts.lng, radiusMeters, opts.category),
-      this.queryPosts(opts.lat, opts.lng, radiusMeters, opts.category),
+      this.queryPosts(opts.lat, opts.lng, radiusMeters, opts.category).catch(() => []),
     ]);
 
     const ranked = this.scoring.scoreAndRank(listings, events, posts);
