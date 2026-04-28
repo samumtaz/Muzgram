@@ -44,4 +44,4 @@ COPY --from=builder /app/packages/utils/dist ./packages/utils/dist
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 
 EXPOSE 3000
-CMD ["sh", "-c", "find /app/apps/api/dist -name 'main.js' | head -5 && cd /app/apps/api && node dist/main"]
+CMD ["node", "apps/api/dist/apps/api/src/main"]
