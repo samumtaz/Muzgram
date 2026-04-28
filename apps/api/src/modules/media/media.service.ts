@@ -32,25 +32,31 @@ interface ConfirmUploadInput {
 
 @Injectable()
 export class MediaService {
-  private readonly s3: S3Client;
-  private readonly bucket: string;
-  private readonly publicBaseUrl: string;
+  private _s3: S3Client | null = null;
+  private _bucket: string | null = null;
+  private _publicBaseUrl: string | null = null;
 
   constructor(
     private readonly config: ConfigService,
     @InjectRepository(MediaAssetEntity)
     private readonly repo: Repository<MediaAssetEntity>,
-  ) {
-    this.s3 = new S3Client({
-      region: 'auto',
-      endpoint: `https://${config.getOrThrow('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`,
-      credentials: {
-        accessKeyId: config.getOrThrow('R2_ACCESS_KEY_ID'),
-        secretAccessKey: config.getOrThrow('R2_SECRET_ACCESS_KEY'),
-      },
-    });
-    this.bucket = config.getOrThrow('R2_BUCKET_NAME');
-    this.publicBaseUrl = config.getOrThrow('R2_PUBLIC_URL');
+  ) {}
+
+  private getS3(): { s3: S3Client; bucket: string; publicBaseUrl: string } {
+    if (!this._s3) {
+      const accountId = this.config.getOrThrow<string>('R2_ACCOUNT_ID');
+      this._s3 = new S3Client({
+        region: 'auto',
+        endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+        credentials: {
+          accessKeyId: this.config.getOrThrow('R2_ACCESS_KEY_ID'),
+          secretAccessKey: this.config.getOrThrow('R2_SECRET_ACCESS_KEY'),
+        },
+      });
+      this._bucket = this.config.getOrThrow('R2_BUCKET_NAME');
+      this._publicBaseUrl = this.config.getOrThrow('R2_PUBLIC_URL');
+    }
+    return { s3: this._s3, bucket: this._bucket!, publicBaseUrl: this._publicBaseUrl! };
   }
 
   async requestPresignedUpload(input: RequestUploadInput): Promise<PresignedUploadUrl> {
@@ -68,16 +74,16 @@ export class MediaService {
     const filename = `upload.${contentType.split('/')[1]}`;
     const key = buildMediaKey(context, ownerId, filename);
 
+    const { s3, bucket, publicBaseUrl } = this.getS3();
+
     const command = new PutObjectCommand({
-      Bucket: this.bucket,
+      Bucket: bucket,
       Key: key,
       ContentType: contentType,
       ContentLength: contentLength,
-      // EXIF GPS data stripping happens client-side before upload
-      // Server enforces content type, not GPS stripping
     });
 
-    const uploadUrl = await getSignedUrl(this.s3, command, {
+    const uploadUrl = await getSignedUrl(s3, command, {
       expiresIn: MEDIA.PRESIGNED_URL_EXPIRY_SECONDS,
     });
 
@@ -86,16 +92,17 @@ export class MediaService {
 
     return {
       uploadUrl,
-      publicUrl: `${this.publicBaseUrl}/${key}`,
+      publicUrl: `${publicBaseUrl}/${key}`,
       key,
       expiresAt: expiresAt.toISOString(),
     };
   }
 
   async confirmUpload(input: ConfirmUploadInput): Promise<MediaAssetEntity> {
+    const { publicBaseUrl } = this.getS3();
     const asset = this.repo.create({
       r2Key: input.r2Key,
-      publicUrl: `${this.publicBaseUrl}/${input.r2Key}`,
+      publicUrl: `${publicBaseUrl}/${input.r2Key}`,
       uploaderId: input.uploaderId,
       ownerId: input.ownerId,
       contentType: input.contentType,
