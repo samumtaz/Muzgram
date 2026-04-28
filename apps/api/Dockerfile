@@ -21,7 +21,7 @@ RUN pnpm --filter @muzgram/constants run build
 RUN pnpm --filter @muzgram/utils run build
 
 # Compile API TypeScript to JS — runs in builder with plenty of RAM
-RUN pnpm --filter @muzgram/api run build
+RUN pnpm --filter @muzgram/api run build && find /app/apps/api/dist -name "*.js" | head -10
 
 # ── Runtime stage ──────────────────────────────────────────────────────────────
 FROM node:20-alpine
