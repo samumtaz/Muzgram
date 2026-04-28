@@ -11,10 +11,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
-        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_b3B0aW11bS1maXNoLTY3LmNsZXJrLmFjY291bnRzLmRldiQ",
-        "EXPO_PUBLIC_API_URL": "https://muzgramapi-production.up.railway.app",
-        "EXPO_PUBLIC_GOOGLE_MAPS_KEY": "AIzaSyDNePU1MPE2zusHG62H19Cj6c8nCaQ_GQY"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
     },
     "production": {
