@@ -8,7 +8,12 @@ function toSnakeCase(str: string): string {
 
 export class SnakeNamingStrategy extends DefaultNamingStrategy {
   override columnName(propertyName: string, customName: string): string {
-    return customName || toSnakeCase(propertyName);
+    // TypeORM 0.3.x passes propertyName as customName when no explicit name is given.
+    // Only treat customName as custom if it differs from the property name.
+    if (customName && customName !== propertyName) {
+      return customName;
+    }
+    return toSnakeCase(propertyName);
   }
 
   override joinColumnName(relationName: string, referencedColumnName: string): string {
