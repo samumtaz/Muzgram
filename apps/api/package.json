@@ -6,6 +6,7 @@
     "build": "nest build",
     "dev": "node --watch -r ts-node/register src/main.ts",
     "start": "node dist/main",
+    "start:railway": "node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json",
@@ -13,8 +14,12 @@
     "migrate:run": "ts-node -r tsconfig-paths/register src/database/run-migrations.ts run",
     "migrate:revert": "ts-node -r tsconfig-paths/register src/database/run-migrations.ts revert",
     "seed:chicago": "ts-node -r tsconfig-paths/register src/database/seeds/chicago-seed.ts",
+    "seed:midwest": "ts-node -r tsconfig-paths/register src/database/seeds/midwest-seed.ts",
+    "seed:posts": "ts-node -r tsconfig-paths/register src/database/seeds/posts-seed.ts",
     "seed:places": "ts-node -r tsconfig-paths/register src/database/seeds/google-places-scraper.ts",
-    "seed:places:dry": "ts-node -r tsconfig-paths/register src/database/seeds/google-places-scraper.ts -- --dry-run"
+    "seed:places:dry": "ts-node -r tsconfig-paths/register src/database/seeds/google-places-scraper.ts -- --dry-run",
+    "enrich:photos": "ts-node -r tsconfig-paths/register src/database/seeds/enrich-photos.ts",
+    "enrich:photos:dry": "ts-node -r tsconfig-paths/register src/database/seeds/enrich-photos.ts -- --dry-run"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.705.0",

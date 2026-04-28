@@ -11,16 +11,13 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/constants/package.json ./packages/constants/
 COPY apps/api/package.json ./apps/api/
 
-# Install all deps (devDeps needed for nest build)
+# Install all deps (devDeps needed for ts-node)
 RUN pnpm install --frozen-lockfile
 
-# Copy source
+# Copy source (no build step — ts-node compiles on-the-fly)
 COPY packages/ ./packages/
 COPY apps/api/src ./apps/api/src
 COPY apps/api/tsconfig.json apps/api/nest-cli.json ./apps/api/
 
-# Compile TypeScript
-RUN cd apps/api && node_modules/.bin/nest build
-
 EXPOSE 3000
-CMD ["node", "apps/api/dist/main"]
+CMD ["pnpm", "--filter", "@muzgram/api", "run", "start:railway"]
