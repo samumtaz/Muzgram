@@ -53,7 +53,7 @@ export class FeedService {
     }
 
     const cacheKey = `feed:${opts.lat.toFixed(3)},${opts.lng.toFixed(3)}:r${radiusKm}:cat${opts.category ?? 'all'}:${offset}`;
-    const cached = await this.cache.get<FeedItem[]>(cacheKey);
+    const cached = await this.cache.get<FeedItem[]>(cacheKey).catch(() => null);
     if (cached) {
       return this.buildPageResponse(cached, offset, limit);
     }
@@ -74,8 +74,7 @@ export class FeedService {
       distanceKm,
     })) as unknown as FeedItem[];
 
-    // Cache the full ranked feed for 60 seconds
-    await this.cache.set(cacheKey, feedItems, TTL.FEED_CACHE_SECONDS * 1000);
+    await this.cache.set(cacheKey, feedItems, TTL.FEED_CACHE_SECONDS * 1000).catch(() => {});
 
     // Annotate with user's save state
     if (opts.userId) {
@@ -88,56 +87,132 @@ export class FeedService {
   async getMapPins(lat: number, lng: number, radiusKm: number) {
     const radiusMeters = radiusKm * 1000;
 
-    const cacheKey = `map:${lat.toFixed(3)},${lng.toFixed(3)}:r${radiusKm}`;
-    const cached = await this.cache.get(cacheKey);
+    const cacheKey = `mapv3:${lat.toFixed(3)},${lng.toFixed(3)}:r${radiusKm}`;
+    const cached = await this.cache.get(cacheKey).catch(() => null);
     if (cached) return cached;
 
-    const listings = await this.listingRepo
-      .createQueryBuilder('l')
-      .select(['l.id', 'l.name', 'l.lat', 'l.lng', 'l.mainCategory', 'l.isHalalVerified', 'l.isFeatured', 'l.thumbnailUrl'])
-      .where(
-        `ST_DWithin(l.location::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :radius)`,
-        { lat, lng, radius: radiusMeters },
-      )
-      .andWhere('l.status = :status', { status: 'active' })
-      .limit(200)
-      .getMany();
+    const rawListings: any[] = await this.listingRepo.query(
+      `SELECT l.id, l.name, l.lat, l.lng,
+              l.main_category      AS "mainCategory",
+              l.is_halal_verified  AS "isHalalVerified",
+              l.is_featured        AS "isFeatured",
+              l.primary_photo_url  AS "thumbnailUrl",
+              cat.slug             AS "categorySlug"
+         FROM listings l
+         LEFT JOIN listing_categories cat ON cat.id = l.category_id
+        WHERE ST_DWithin(
+                l.location::geography,
+                ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+                $3
+              )
+          AND l.status = 'active'
+        LIMIT 200`,
+      [lng, lat, radiusMeters],
+    );
 
-    const events = await this.eventRepo
-      .createQueryBuilder('e')
-      .select(['e.id', 'e.title', 'e.lat', 'e.lng', 'e.isFeatured', 'e.thumbnailUrl'])
-      .where(
-        `ST_DWithin(e.location::geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography, :radius)`,
-        { lat, lng, radius: radiusMeters },
-      )
-      .andWhere('e.status = :status', { status: 'active' })
-      .andWhere('e.startAt > now()')
-      .limit(100)
-      .getMany();
+    const rawEvents: any[] = await this.eventRepo.query(
+      `SELECT e.id, e.title, e.lat, e.lng,
+              e.is_featured       AS "isFeatured",
+              e.cover_photo_url   AS "thumbnailUrl",
+              e.start_at          AS "startAt",
+              e.address,
+              e.is_free           AS "isFree",
+              e.tags,
+              e.organizer_name    AS "organizerName"
+         FROM events e
+        WHERE ST_DWithin(
+                e.location::geography,
+                ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography,
+                $3
+              )
+          AND e.status = 'active'
+          AND e.start_at > now()
+        LIMIT 100`,
+      [lng, lat, radiusMeters],
+    );
 
     const pins = [
-      ...listings.map((l) => ({
+      ...rawListings.map((l) => ({
         id: l.id,
         type: ContentType.LISTING,
-        location: { lat: l.lat, lng: l.lng },
+        location: { lat: Number(l.lat), lng: Number(l.lng) },
         name: l.name,
-        thumbnailUrl: l.thumbnailUrl,
+        thumbnailUrl: l.thumbnailUrl ?? null,
         mainCategory: l.mainCategory,
+        categorySlug: l.categorySlug ?? null,
         isHalalVerified: l.isHalalVerified,
         isFeatured: l.isFeatured,
       })),
-      ...events.map((e) => ({
+      ...rawEvents.map((e) => ({
         id: e.id,
         type: ContentType.EVENT,
-        location: { lat: e.lat, lng: e.lng },
+        location: { lat: Number(e.lat), lng: Number(e.lng) },
         name: e.title,
-        thumbnailUrl: e.thumbnailUrl,
+        thumbnailUrl: e.thumbnailUrl ?? null,
         isFeatured: e.isFeatured,
+        startAt: e.startAt ?? null,
+        address: e.address ?? null,
+        isFree: e.isFree ?? false,
+        tags: Array.isArray(e.tags) ? e.tags : (e.tags ? e.tags.split(',').filter(Boolean) : []),
+        organizerName: e.organizerName ?? null,
       })),
     ];
 
-    await this.cache.set(cacheKey, pins, TTL.MAP_PINS_CACHE_SECONDS * 1000);
+    await this.cache.set(cacheKey, pins, TTL.MAP_PINS_CACHE_SECONDS * 1000).catch(() => {});
     return pins;
+  }
+
+  async getTrending(lat: number, lng: number, radiusKm: number) {
+    const radiusMeters = radiusKm * 1000;
+
+    const listings = await this.listingRepo.query(
+      `SELECT l.id, l.name, l.slug, l.main_category AS "mainCategory",
+              l.primary_photo_url AS "thumbnailUrl",
+              l.address, l.lat, l.lng,
+              l.save_count AS "savesCount",
+              l.checkins_count AS "checkinsCount",
+              l.trending_score AS "trendingScore",
+              l.is_halal_verified AS "isHalalVerified",
+              cat.slug AS "categorySlug",
+              ST_Distance(l.location::geography, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography)/1000 AS "distanceKm"
+         FROM listings l
+         LEFT JOIN listing_categories cat ON cat.id = l.category_id
+        WHERE ST_DWithin(l.location::geography, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography, $3)
+          AND l.status = 'active'
+        ORDER BY (
+          COALESCE((SELECT COUNT(*) FROM saves s WHERE s."contentId" = l.id AND s.created_at > now() - INTERVAL '7 days'), 0) * 2
+          + l.checkins_count * 3
+          + l.save_count * 0.1
+        ) DESC
+        LIMIT 10`,
+      [lng, lat, radiusMeters],
+    );
+
+    const events = await this.eventRepo.query(
+      `SELECT e.id, e.title AS name, e.slug,
+              e.cover_photo_url AS "thumbnailUrl",
+              e.address, e.lat, e.lng,
+              e.start_at AS "startAt",
+              e.is_free AS "isFree",
+              e.saves_count AS "savesCount",
+              e.trending_score AS "trendingScore",
+              ST_Distance(e.location::geography, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography)/1000 AS "distanceKm"
+         FROM events e
+        WHERE ST_DWithin(e.location::geography, ST_SetSRID(ST_MakePoint($1,$2),4326)::geography, $3)
+          AND e.status = 'active'
+          AND e.start_at > now()
+        ORDER BY (
+          COALESCE((SELECT COUNT(*) FROM saves s WHERE s."contentId" = e.id AND s.created_at > now() - INTERVAL '7 days'), 0) * 2
+          + e.saves_count * 0.1
+        ) DESC
+        LIMIT 5`,
+      [lng, lat, radiusMeters],
+    );
+
+    return {
+      listings: listings.map((l: any) => ({ ...l, itemType: 'listing' })),
+      events: events.map((e: any) => ({ ...e, itemType: 'event' })),
+    };
   }
 
   private async queryListings(lat: number, lng: number, radiusMeters: number, category?: ListingMainCategory) {
