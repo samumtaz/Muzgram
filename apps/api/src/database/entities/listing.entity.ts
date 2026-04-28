@@ -38,18 +38,18 @@ export class ListingEntity {
   @Column({ type: 'enum', enum: ListingMainCategory })
   mainCategory: ListingMainCategory;
 
-  @Column()
+  @Column({ name: 'category_id' })
   categoryId: string;
 
   @ManyToOne(() => ListingCategoryEntity, (cat) => cat.listings)
-  @JoinColumn({ name: 'categoryId' })
+  @JoinColumn({ name: 'category_id' })
   category: ListingCategoryEntity;
 
-  @Column()
+  @Column({ name: 'city_id' })
   cityId: string;
 
   @ManyToOne(() => CityEntity, (city) => city.listings)
-  @JoinColumn({ name: 'cityId' })
+  @JoinColumn({ name: 'city_id' })
   city: CityEntity;
 
   @Column({ length: 500 })
@@ -118,16 +118,16 @@ export class ListingEntity {
   @Column({ type: 'simple-array', default: '' })
   mediaUrls: string[];
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ name: 'primary_photo_url', type: 'varchar', nullable: true })
   thumbnailUrl: string | null;
 
-  @Column({ default: 0 })
+  @Column({ name: 'save_count', default: 0 })
   savesCount: number;
 
-  @Column({ default: 0 })
+  @Column({ name: 'view_count', default: 0 })
   viewsCount: number;
 
-  @Column({ default: 0 })
+  @Column({ name: 'share_count', default: 0 })
   sharesCount: number;
 
   @Column({ default: 0 })

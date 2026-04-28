@@ -24,11 +24,11 @@ export class CommunityPostEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ name: 'author_id' })
   authorId: string;
 
   @ManyToOne(() => UserEntity, (user) => user.posts)
-  @JoinColumn({ name: 'authorId' })
+  @JoinColumn({ name: 'author_id' })
   author: UserEntity;
 
   @Column({ type: 'text' })
@@ -37,14 +37,14 @@ export class CommunityPostEntity {
   @Column({ type: 'simple-array', default: '' })
   mediaUrls: string[];
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ name: 'linkedListingId', type: 'uuid', nullable: true })
   linkedListingId: string | null;
 
   @ManyToOne(() => ListingEntity, { nullable: true })
   @JoinColumn({ name: 'linkedListingId' })
   linkedListing: ListingEntity | null;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ name: 'linkedEventId', type: 'uuid', nullable: true })
   linkedEventId: string | null;
 
   @ManyToOne(() => EventEntity, { nullable: true })
@@ -70,17 +70,17 @@ export class CommunityPostEntity {
   status: PostStatus;
 
   // Weighted sum of report weights that have been submitted
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
+  @Column({ name: 'reportWeight', type: 'decimal', precision: 5, scale: 2, default: 0 })
   reportWeight: number;
 
-  @Column({ default: 0 })
+  @Column({ name: 'save_count', default: 0 })
   savesCount: number;
 
-  @Column({ default: 0 })
+  @Column({ name: 'share_count', default: 0 })
   sharesCount: number;
 
   // Posts auto-expire after 7 days (managed by worker job)
-  @Column()
+  @Column({ name: 'expiresAt' })
   expiresAt: Date;
 
   @OneToMany(() => SaveEntity, (save) => save.post)

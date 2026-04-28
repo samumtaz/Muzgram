@@ -22,17 +22,17 @@ export class SaveEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ name: 'user_id' })
   userId: string;
 
   @ManyToOne(() => UserEntity, (user) => user.saves, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @Column({ type: 'enum', enum: ContentType })
   contentType: ContentType;
 
-  @Column()
+  @Column({ name: 'content_id' })
   contentId: string;
 
   // Nullable FK references — only one is populated based on contentType
@@ -40,21 +40,21 @@ export class SaveEntity {
   listingId: string | null;
 
   @ManyToOne(() => ListingEntity, (l) => l.saves, { nullable: true })
-  @JoinColumn({ name: 'listingId' })
+  @JoinColumn({ name: 'listing_id' })
   listing: ListingEntity | null;
 
   @Column({ type: 'uuid', nullable: true })
   eventId: string | null;
 
   @ManyToOne(() => EventEntity, (e) => e.saves, { nullable: true })
-  @JoinColumn({ name: 'eventId' })
+  @JoinColumn({ name: 'event_id' })
   event: EventEntity | null;
 
   @Column({ type: 'uuid', nullable: true })
   postId: string | null;
 
   @ManyToOne(() => CommunityPostEntity, (p) => p.saves, { nullable: true })
-  @JoinColumn({ name: 'postId' })
+  @JoinColumn({ name: 'post_id' })
   post: CommunityPostEntity | null;
 
   @CreateDateColumn()

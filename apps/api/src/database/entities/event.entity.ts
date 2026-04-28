@@ -36,33 +36,35 @@ export class EventEntity {
   @Column({ type: 'text' })
   description: string;
 
-  @Column()
+  @Column({ name: 'category_id' })
   categoryId: string;
 
   @ManyToOne(() => ListingCategoryEntity)
-  @JoinColumn({ name: 'categoryId' })
+  @JoinColumn({ name: 'category_id' })
   category: ListingCategoryEntity;
 
-  @Column()
-  organizerId: string;
+  @Column({ name: 'organizer_id', nullable: true })
+  organizerId: string | null;
 
   @ManyToOne(() => UserEntity, { nullable: true })
-  @JoinColumn({ name: 'organizerId' })
-  organizer: UserEntity;
+  @JoinColumn({ name: 'organizer_id' })
+  organizer: UserEntity | null;
 
-  // Null if organizer is a user directly; set if a business is hosting
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ name: 'organizer_name', type: 'varchar', length: 255, nullable: true })
+  organizerName: string | null;
+
+  @Column({ name: 'listing_id', type: 'uuid', nullable: true })
   listingId: string | null;
 
   @ManyToOne(() => ListingEntity, { nullable: true })
-  @JoinColumn({ name: 'listingId' })
+  @JoinColumn({ name: 'listing_id' })
   listing: ListingEntity | null;
 
-  @Column()
+  @Column({ name: 'city_id' })
   cityId: string;
 
   @ManyToOne(() => CityEntity, (city) => city.events)
-  @JoinColumn({ name: 'cityId' })
+  @JoinColumn({ name: 'city_id' })
   city: CityEntity;
 
   @Column({ length: 500 })
@@ -111,20 +113,27 @@ export class EventEntity {
   @Column({ type: 'timestamptz', nullable: true })
   featuredUntil: Date | null;
 
-  @Column({ type: 'simple-array', default: '' })
+  @Column({ type: 'text', array: true, default: '{}' })
   mediaUrls: string[];
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ name: 'cover_photo_url', type: 'varchar', nullable: true })
   thumbnailUrl: string | null;
 
-  @Column({ type: 'simple-array', default: '' })
+  @Column({ type: 'text', array: true, default: '{}' })
   tags: string[];
 
-  @Column({ default: 0 })
+  @Column({ name: 'save_count', default: 0 })
   savesCount: number;
 
-  @Column({ default: 0 })
+  @Column({ name: 'share_count', default: 0 })
   sharesCount: number;
+
+  @Index({ unique: true })
+  @Column({ name: 'external_id', type: 'varchar', nullable: true })
+  externalId: string | null;
+
+  @Column({ name: 'source', type: 'varchar', length: 50, default: 'manual' })
+  source: string;
 
   @OneToMany(() => SaveEntity, (save) => save.event)
   saves: SaveEntity[];
