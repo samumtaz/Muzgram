@@ -25,20 +25,25 @@ interface ClerkUserPayload {
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
-  private readonly webhook: Webhook;
+  private _webhook: Webhook | null = null;
 
   constructor(
     private readonly config: ConfigService,
     private readonly usersService: UsersService,
-  ) {
-    this.webhook = new Webhook(config.getOrThrow('CLERK_WEBHOOK_SECRET'));
+  ) {}
+
+  private getWebhook(): Webhook {
+    if (!this._webhook) {
+      this._webhook = new Webhook(this.config.getOrThrow('CLERK_WEBHOOK_SECRET'));
+    }
+    return this._webhook;
   }
 
   async processClerkWebhook(headers: ClerkWebhookHeaders, rawBody: Buffer): Promise<void> {
     let event: { type: string; data: ClerkUserPayload };
 
     try {
-      event = this.webhook.verify(rawBody, {
+      event = this.getWebhook().verify(rawBody, {
         'svix-id': headers.svixId,
         'svix-timestamp': headers.svixTimestamp,
         'svix-signature': headers.svixSignature,
