@@ -67,13 +67,17 @@ export class HttpExceptionFilter implements ExceptionFilter {
       };
     }
 
+    const detail = exception instanceof Error
+      ? `${exception.message} — ${exception.stack?.split('\n')[1]?.trim() ?? ''}`
+      : String(exception);
+
     return {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       problem: {
         type: 'https://muzgram.com/errors/internal-server-error',
         title: 'Internal Server Error',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        detail: 'An unexpected error occurred.',
+        detail,
         instance: request.url,
       },
     };
