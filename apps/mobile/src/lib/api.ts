@@ -49,9 +49,33 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   return (envelope.data ?? envelope) as T;
 }
 
+async function requestRaw<T>(path: string, opts: RequestOptions = {}): Promise<T> {
+  const { token, ...init } = opts;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    ...(init.headers as Record<string, string>),
+  };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const response = await fetch(`${API_URL}${path}`, { ...init, headers });
+  if (!response.ok) {
+    const problem = (await response.json().catch(() => ({
+      type: 'unknown',
+      title: 'Request failed',
+      status: response.status,
+      detail: response.statusText,
+    }))) as ProblemDetail;
+    throw new ApiError(problem, response.status);
+  }
+  return response.json() as Promise<T>;
+}
+
 export const api = {
   get: <T>(path: string, opts?: RequestOptions) =>
     request<T>(path, { method: 'GET', ...opts }),
+
+  getRaw: <T>(path: string, opts?: RequestOptions) =>
+    requestRaw<T>(path, { method: 'GET', ...opts }),
 
   post: <T>(path: string, body: unknown, opts?: RequestOptions) =>
     request<T>(path, { method: 'POST', body: JSON.stringify(body), ...opts }),

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
@@ -6,6 +6,7 @@ import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ContentType } from '@muzgram/types';
 
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { ClerkAuthGuard } from '../../common/guards/clerk-auth.guard';
 import { UserEntity } from '../../database/entities/user.entity';
 import { SavesService } from './saves.service';
 
@@ -20,6 +21,7 @@ class ToggleSaveDto {
 
 @ApiTags('saves')
 @Controller('saves')
+@UseGuards(ClerkAuthGuard)
 export class SavesController {
   constructor(private readonly savesService: SavesService) {}
 

@@ -20,7 +20,7 @@ export class DailySpecialEntity {
   listingId: string;
 
   @ManyToOne(() => ListingEntity, (listing) => listing.dailySpecials, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'listingId' })
+  @JoinColumn({ name: 'listing_id' })
   listing: ListingEntity;
 
   @Column({ length: 255 })

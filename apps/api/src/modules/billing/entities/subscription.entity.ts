@@ -49,7 +49,7 @@ export class SubscriptionEntity {
   listingId: string;
 
   @ManyToOne(() => ListingEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'listingId' })
+  @JoinColumn({ name: 'listing_id' })
   listing: ListingEntity;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -100,7 +100,7 @@ export class SubscriptionEntity {
   createdByUserId: string | null;
 
   @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'createdByUserId' })
+  @JoinColumn({ name: 'created_by_user_id' })
   createdByUser: UserEntity | null;
 
   @Column({ type: 'text', nullable: true })

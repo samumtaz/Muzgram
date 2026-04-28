@@ -5,6 +5,7 @@ import { LessThan, Repository } from 'typeorm';
 
 import { EventStatus } from '@muzgram/types';
 import { EventEntity } from '../../database/entities/event.entity';
+import { EventSyncService } from './event-sync.service';
 
 @Injectable()
 export class EventsCronService {
@@ -13,9 +14,10 @@ export class EventsCronService {
   constructor(
     @InjectRepository(EventEntity)
     private readonly events: Repository<EventEntity>,
+    private readonly eventSync: EventSyncService,
   ) {}
 
-  // Runs every day at 2am — marks events completed 30 days after they ended
+  // 2am — archive old completed events
   @Cron(CronExpression.EVERY_DAY_AT_2AM)
   async archiveCompletedEvents() {
     const cutoff = new Date();
@@ -32,5 +34,13 @@ export class EventsCronService {
     if (result.affected) {
       this.logger.log(`Archived ${result.affected} completed event(s)`);
     }
+  }
+
+  // 3am — pull fresh events from Ticketmaster + Eventbrite
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async syncExternalEvents() {
+    this.logger.log('Starting external event sync...');
+    const { synced, skipped } = await this.eventSync.syncAll();
+    this.logger.log(`External sync done — ${synced} upserted, ${skipped} skipped`);
   }
 }

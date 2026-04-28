@@ -276,7 +276,7 @@ async function upsertListing(
       lat, lng, phone, website,
       main_category,
       description, hours,
-      thumbnail_url, media_urls,
+      primary_photo_url, media_urls,
       is_halal_verified, halal_certification,
       status, source, external_id,
       rating, rating_count,

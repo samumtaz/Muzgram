@@ -28,5 +28,13 @@
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   },
-  "packageManager": "pnpm@9.14.0"
+  "packageManager": "pnpm@9.14.0",
+  "pnpm": {
+    "overrides": {
+      "expo-constants": "18.0.13",
+      "expo-crypto": "~15.0.8",
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
+    }
+  }
 }

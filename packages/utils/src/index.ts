@@ -20,10 +20,10 @@ function toRad(deg: number): number {
 }
 
 export function formatDistanceLabel(km: number): string {
-  if (km < 0.5) return 'Right here';
-  if (km < 1) return `${Math.round(km * 1000)}m away`;
-  if (km < 10) return `${km.toFixed(1)}km away`;
-  return `${Math.round(km)}km away`;
+  const miles = km * 0.621371;
+  if (miles < 0.1) return 'Right here';
+  if (miles < 10) return `${miles.toFixed(1)} mi`;
+  return `${Math.round(miles)} mi`;
 }
 
 // ─── Slug Utils ───────────────────────────────────────────────────────────────

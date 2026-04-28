@@ -2,7 +2,7 @@ import { ListingMainCategory } from '@muzgram/types';
 
 // ─── Feed ─────────────────────────────────────────────────────────────────────
 
-export const FEED_DEFAULT_RADIUS_KM = 8;
+export const FEED_DEFAULT_RADIUS_KM = 40;
 export const FEED_MAX_RADIUS_KM = 40;
 export const FEED_DEFAULT_PAGE_SIZE = 20;
 export const FEED_MAX_PAGE_SIZE = 50;

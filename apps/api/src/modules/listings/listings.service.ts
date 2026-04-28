@@ -153,6 +153,36 @@ export class ListingsService {
     });
   }
 
+  async checkIn(listingId: string, userId: string, lat?: number, lng?: number) {
+    // Dedup: one check-in per user per listing per UTC day
+    const today = new Date().toISOString().slice(0, 10);
+    const existing = await this.repo.manager.query(
+      `SELECT id FROM check_ins WHERE user_id = $1 AND listing_id = $2 AND created_at::date = $3::date`,
+      [userId, listingId, today],
+    );
+    if (existing.length > 0) {
+      return { alreadyCheckedIn: true, message: 'Already checked in today' };
+    }
+
+    await this.repo.manager.query(
+      `INSERT INTO check_ins(user_id, listing_id, lat, lng) VALUES($1,$2,$3,$4)`,
+      [userId, listingId, lat ?? null, lng ?? null],
+    );
+
+    // Increment counter on the listing
+    await this.repo.manager.query(
+      `UPDATE listings SET checkins_count = checkins_count + 1 WHERE id = $1`,
+      [listingId],
+    );
+
+    const row = await this.repo.manager.query(
+      `SELECT checkins_count AS "checkinsCount" FROM listings WHERE id = $1`,
+      [listingId],
+    );
+
+    return { success: true, checkinsCount: row[0]?.checkinsCount ?? 0 };
+  }
+
   private buildPoint(lat: number, lng: number): string {
     return `ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)`;
   }

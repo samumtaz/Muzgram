@@ -3,11 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseUUIDPipe,
   Post,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import {
@@ -25,6 +28,7 @@ import { Type } from 'class-transformer';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { UserEntity } from '../../database/entities/user.entity';
+import { EventSyncService } from './event-sync.service';
 import { EventsService } from './events.service';
 
 class CreateEventDto {
@@ -96,7 +100,11 @@ class CreateEventDto {
 @ApiTags('events')
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly eventSync: EventSyncService,
+    private readonly config: ConfigService,
+  ) {}
 
   @Public()
   @Get(':id')
@@ -136,5 +144,16 @@ export class EventsController {
   @ApiOperation({ summary: 'Cancel an event' })
   cancel(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: UserEntity) {
     return this.eventsService.cancelEvent(id, user.id);
+  }
+
+  @Public()
+  @Post('sync')
+  @ApiOperation({ summary: 'Manually trigger external event sync (admin only)' })
+  triggerSync(@Headers('x-admin-token') token: string) {
+    const expected = this.config.get<string>('ADMIN_TOKEN');
+    if (!expected || token !== expected) throw new UnauthorizedException();
+    // Run in background — sync takes ~60s, don't hold the HTTP connection
+    this.eventSync.syncAll().catch((err) => console.error('[EventSync] error:', err));
+    return { started: true, message: 'Sync running in background — watch server logs for progress' };
   }
 }

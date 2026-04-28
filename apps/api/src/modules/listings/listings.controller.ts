@@ -137,6 +137,16 @@ export class ListingsController {
     return this.listingsService.claimListing(id, user.id);
   }
 
+  @Post(':id/checkin')
+  @ApiOperation({ summary: 'Check in to a listing (once per day per user)' })
+  checkIn(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: { lat?: number; lng?: number },
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.listingsService.checkIn(id, user.id, dto.lat, dto.lng);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Update listing details (claimed owners only)' })
   update(

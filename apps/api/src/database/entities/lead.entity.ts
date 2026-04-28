@@ -31,14 +31,14 @@ export class LeadEntity {
   listingId: string;
 
   @ManyToOne(() => ListingEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'listingId' })
+  @JoinColumn({ name: 'listing_id' })
   listing: ListingEntity;
 
   @Column()
   senderId: string;
 
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'senderId' })
+  @JoinColumn({ name: 'sender_id' })
   sender: UserEntity;
 
   @Column({ length: 20 })

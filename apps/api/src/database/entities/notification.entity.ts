@@ -22,7 +22,7 @@ export class NotificationEntity {
   recipientId: string;
 
   @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'recipientId' })
+  @JoinColumn({ name: 'recipient_id' })
   recipient: UserEntity;
 
   @Column({ type: 'varchar', length: 50 })

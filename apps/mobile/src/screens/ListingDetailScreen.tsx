@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import {
   ActivityIndicator,
+  Alert,
   Linking,
   Modal,
   Platform,
@@ -18,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BusinessHours, ContentType, HalalCertification } from '@muzgram/types';
 import { formatDistanceLabel, isOpenNow } from '@muzgram/utils';
 import { useToggleSave } from '../queries/feed.queries';
-import { useListing } from '../queries/listings.queries';
+import { useCheckIn, useListing } from '../queries/listings.queries';
 import { useListingEvents } from '../queries/events.queries';
 import { useLocationStore } from '../stores/location.store';
 import { HalalBadge } from '../components/ui/HalalBadge';
@@ -79,6 +80,7 @@ export function ListingDetailScreen() {
   const { data: eventsData } = useListingEvents(id);
   const toggleSave = useToggleSave();
 
+  const checkIn = useCheckIn();
   const [hoursOpen, setHoursOpen] = useState(false);
   const [descExpanded, setDescExpanded] = useState(false);
   const [descClamped, setDescClamped] = useState(false);
@@ -86,6 +88,7 @@ export function ListingDetailScreen() {
   const [lightboxVisible, setLightboxVisible] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
+  const [checkedIn, setCheckedIn] = useState(false);
 
   const events = (eventsData as any)?.data ?? [];
 
@@ -455,6 +458,37 @@ export function ListingDetailScreen() {
           <TouchableOpacity onPress={handleShare} activeOpacity={0.7} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Text style={{ fontSize: 18, color: '#606060' }}>↑</Text>
             <Text style={{ color: '#606060', fontSize: 13 }}>Share</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => {
+              if (checkedIn) return;
+              checkIn.mutate(
+                { listingId: listing.id, lat: location?.lat, lng: location?.lng },
+                {
+                  onSuccess: (res) => {
+                    if (res.alreadyCheckedIn) {
+                      Alert.alert('Already checked in', 'You already checked in here today!');
+                    } else {
+                      setCheckedIn(true);
+                      track('listing_checkin', { listingId: listing.id });
+                    }
+                  },
+                },
+              );
+            }}
+            style={{
+              flexDirection: 'row', alignItems: 'center', gap: 5,
+              paddingHorizontal: 14, paddingVertical: 10,
+              borderRadius: 999, borderWidth: 1,
+              borderColor: checkedIn ? '#22c55e' : '#2A2A2A',
+              backgroundColor: checkedIn ? '#22c55e18' : 'transparent',
+            }}
+          >
+            <Text style={{ fontSize: 14 }}>{checkedIn ? '✓' : '📍'}</Text>
+            <Text style={{ color: checkedIn ? '#22c55e' : '#A0A0A0', fontSize: 12, fontWeight: '600' }}>
+              {checkedIn ? 'Checked in' : 'Check in'}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleDirections} activeOpacity={0.7} style={{ flex: 1, backgroundColor: '#D4A853', borderRadius: 999, paddingVertical: 13, alignItems: 'center' }}>
             <Text style={{ color: '#0D0D0D', fontWeight: '700', fontSize: 15 }}>Get Directions</Text>

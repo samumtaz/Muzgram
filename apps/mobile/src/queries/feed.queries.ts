@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ContentType, CursorPage, FeedItem, ListingMainCategory } from '@muzgram/types';
 
@@ -25,7 +25,7 @@ export function useFeed(lat: number, lng: number, category?: ListingMainCategory
         ...(category && { category }),
         ...(pageParam && { cursor: pageParam }),
       });
-      return api.get<CursorPage<FeedItem>>(`/feed?${params}`, { token: token ?? undefined });
+      return api.getRaw<CursorPage<FeedItem>>(`/feed?${params}`, { token: token ?? undefined });
     },
     getNextPageParam: (lastPage) => lastPage.meta.cursor ?? undefined,
     initialPageParam: undefined as string | undefined,
@@ -37,7 +37,7 @@ export function useFeed(lat: number, lng: number, category?: ListingMainCategory
 export function useMapPins(lat: number, lng: number, radiusKm: number) {
   const token = useAuthStore((s) => s.token);
 
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: feedKeys.mapPins(lat, lng, radiusKm),
     queryFn: () => {
       const params = new URLSearchParams({
@@ -45,10 +45,8 @@ export function useMapPins(lat: number, lng: number, radiusKm: number) {
         lng: lng.toString(),
         radiusKm: radiusKm.toString(),
       });
-      return api.get(`/feed/map?${params}`, { token: token ?? undefined });
+      return api.get<any[]>(`/feed/map?${params}`, { token: token ?? undefined });
     },
-    getNextPageParam: () => undefined,
-    initialPageParam: undefined,
     enabled: lat !== 0 && lng !== 0,
     staleTime: 2 * 60 * 1000,
   });

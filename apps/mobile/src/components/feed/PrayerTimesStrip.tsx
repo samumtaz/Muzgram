@@ -7,7 +7,6 @@ import { useLocationStore } from '../../stores/location.store';
 
 const PRAYER_NAMES: Record<string, string> = {
   fajr: 'Fajr',
-  sunrise: 'Sunrise',
   dhuhr: 'Dhuhr',
   asr: 'Asr',
   maghrib: 'Maghrib',
@@ -35,17 +34,10 @@ function getPrayerTimes(lat: number, lng: number) {
   return new adhan.PrayerTimes(coords, date, params);
 }
 
-function formatCitySlug(slug: string | null): string | null {
-  if (!slug) return null;
-  return slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
 export function PrayerTimesStrip({ onDismiss }: { onDismiss: () => void }) {
-  const { location, citySlug } = useLocationStore();
+  const { location } = useLocationStore();
   const [now, setNow] = useState(Date.now());
-  const cityName = formatCitySlug(citySlug);
 
-  // Tick every minute
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(id);
@@ -62,7 +54,6 @@ export function PrayerTimesStrip({ onDismiss }: { onDismiss: () => void }) {
     date: times[key as keyof adhan.PrayerTimes] as Date,
   }));
 
-  // Find current/next prayer
   const upcoming = prayers.filter((p) => p.date.getTime() > now);
   const next = upcoming[0] ?? prayers[prayers.length - 1];
   const msUntilNext = next.date.getTime() - now;
@@ -71,64 +62,72 @@ export function PrayerTimesStrip({ onDismiss }: { onDismiss: () => void }) {
   return (
     <View style={{
       marginHorizontal: 16,
-      marginBottom: 10,
-      borderRadius: 14,
+      marginBottom: 8,
+      borderRadius: 10,
       backgroundColor: '#0F1A0F',
       borderWidth: 1,
       borderColor: '#22c55e30',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 12,
+      paddingVertical: 7,
       overflow: 'hidden',
     }}>
-      {/* Header row */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingTop: 10, paddingBottom: 6 }}>
-        <Text style={{ fontSize: 13 }}>🕌</Text>
-        <View style={{ flex: 1, marginLeft: 8 }}>
-          <Text style={{ color: '#22c55e', fontSize: 13, fontWeight: '700' }}>
-            {isPast ? next.label : `${next.label} · ${formatTime(next.date)}`}
+      {/* Next prayer info */}
+      <Text style={{ fontSize: 11 }}>🕌</Text>
+      <View style={{ marginLeft: 5, marginRight: 8 }}>
+        <Text style={{ color: '#22c55e', fontSize: 11, fontWeight: '700' }} numberOfLines={1}>
+          {next.label}
+          <Text style={{ color: '#86efac', fontWeight: '400' }}>
+            {isPast ? '' : `  ${formatCountdown(msUntilNext)}`}
           </Text>
-          <Text style={{ color: '#86efac', fontSize: 11, marginTop: 1 }}>
-            {isPast ? 'Prayer time' : `in ${formatCountdown(msUntilNext)}`}
-            {cityName ? <Text style={{ color: '#4b7a4b' }}>{`  ·  ${cityName}`}</Text> : null}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={onDismiss}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Text style={{ color: '#4b7a4b', fontSize: 16, lineHeight: 18 }}>×</Text>
-        </TouchableOpacity>
+        </Text>
       </View>
 
-      {/* Prayer times row */}
+      {/* Divider */}
+      <View style={{ width: 1, height: 18, backgroundColor: '#22c55e25', marginRight: 8 }} />
+
+      {/* Prayer times — scrollable, fills remaining space */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 14, paddingBottom: 10, gap: 16 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ alignItems: 'center', gap: 12 }}
       >
         {prayers.map((p) => {
           const isNext = p.key === next.key;
           const isPrayed = p.date.getTime() < now;
           return (
-            <View key={p.key} style={{ alignItems: 'center', gap: 3 }}>
+            <View key={p.key} style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+              {isNext && (
+                <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: '#22c55e' }} />
+              )}
               <Text style={{
-                fontSize: 11,
-                fontWeight: isNext ? '700' : '500',
+                fontSize: 10,
+                fontWeight: isNext ? '700' : '400',
                 color: isNext ? '#22c55e' : isPrayed ? '#3a5a3a' : '#86efac',
               }}>
                 {p.label}
               </Text>
               <Text style={{
-                fontSize: 11,
-                color: isNext ? '#22c55e' : isPrayed ? '#3a5a3a' : '#6b9e6b',
+                fontSize: 10,
+                color: isNext ? '#22c55e' : isPrayed ? '#3a5a3a' : '#5a8a5a',
               }}>
                 {formatTime(p.date)}
               </Text>
-              {isNext && (
-                <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: '#22c55e' }} />
-              )}
             </View>
           );
         })}
       </ScrollView>
+
+      {/* Dismiss */}
+      <TouchableOpacity
+        onPress={onDismiss}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        style={{ marginLeft: 8 }}
+      >
+        <Text style={{ color: '#4b7a4b', fontSize: 15, lineHeight: 16 }}>×</Text>
+      </TouchableOpacity>
     </View>
   );
 }

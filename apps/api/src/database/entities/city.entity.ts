@@ -42,7 +42,7 @@ export class CityEntity {
   @Column({ default: false })
   isActive: boolean;
 
-  @Column({ default: 0 })
+  @Column({ name: 'listing_count', default: 0 })
   listingsCount: number;
 
   @OneToMany(() => ListingEntity, (listing) => listing.city)

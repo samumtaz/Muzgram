@@ -38,17 +38,10 @@ export const CommunityPostCard = memo(function CommunityPostCard({
             {post.author.displayName ?? 'Community member'}
           </Text>
           <Text className="text-text-muted text-xs">
-            {post.neighborhood ? `${post.neighborhood} · ` : ''}{timeAgo}
+            {post.neighborhood ?? ''}
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={() => onSave?.(ContentType.POST, post.id)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Text className={`text-xl ${post.isSaved ? 'text-brand-gold' : 'text-text-muted'}`}>
-            {post.isSaved ? '♥' : '♡'}
-          </Text>
-        </TouchableOpacity>
+        <Text className="text-text-muted text-xs">{formatTimeAgo(post.createdAt)}</Text>
       </View>
 
       {/* Body */}
@@ -75,8 +68,20 @@ export const CommunityPostCard = memo(function CommunityPostCard({
       )}
 
       {/* Footer */}
-      <View className="flex-row items-center mt-3 pt-3 border-t border-surface-border">
-        <Text className="text-text-muted text-xs">{post.savesCount} saves</Text>
+      <View className="flex-row items-center gap-4 mt-3 pt-3 border-t border-surface-border">
+        <TouchableOpacity
+          onPress={() => onSave?.(ContentType.POST, post.id)}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Text style={{ fontSize: 15, color: post.isSaved ? '#D4A853' : '#606060' }}>
+            {post.isSaved ? '♥' : '♡'}
+          </Text>
+          <Text style={{ fontSize: 12, color: '#606060' }}>
+            {post.savesCount > 0 ? post.savesCount : ''}
+          </Text>
+        </TouchableOpacity>
+        <Text className="text-text-muted text-xs">· {formatTimeAgo(post.createdAt)}</Text>
       </View>
     </View>
   );

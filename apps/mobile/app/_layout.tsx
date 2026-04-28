@@ -60,27 +60,23 @@ function RootLayoutNav() {
 
     if (isSignedIn) {
       if (inAuthGroup) {
-        // Just signed in — send to onboarding if not done yet, else feed
         if (!hasCompletedOnboarding) {
           router.replace('/(onboarding)/welcome');
         } else {
           router.replace('/(tabs)');
         }
       } else if (!inOnboarding && !hasCompletedOnboarding) {
-        // Signed in but somehow bypassed onboarding
         router.replace('/(onboarding)/welcome');
       }
-    } else if (!isSignedIn && !inAuthGroup) {
-      router.replace('/(auth)');
-    }
-
-    if (isSignedIn) {
       getToken().then((t) => {
         setToken(t);
         setLoading(false);
         SplashScreen.hideAsync();
       });
     } else {
+      if (!inAuthGroup) {
+        router.replace('/(auth)');
+      }
       setLoading(false);
       SplashScreen.hideAsync();
     }

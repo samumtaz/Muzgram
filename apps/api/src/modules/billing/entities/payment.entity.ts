@@ -31,14 +31,14 @@ export class PaymentEntity {
   listingId: string;
 
   @ManyToOne(() => ListingEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'listingId' })
+  @JoinColumn({ name: 'listing_id' })
   listing: ListingEntity;
 
   @Column({ type: 'uuid', nullable: true })
   subscriptionId: string | null;
 
   @ManyToOne(() => SubscriptionEntity, (s) => s.payments, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'subscriptionId' })
+  @JoinColumn({ name: 'subscription_id' })
   subscription: SubscriptionEntity | null;
 
   @Index({ unique: true })
@@ -85,7 +85,7 @@ export class PaymentEntity {
   createdByUserId: string | null;
 
   @ManyToOne(() => UserEntity, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'createdByUserId' })
+  @JoinColumn({ name: 'created_by_user_id' })
   createdByUser: UserEntity | null;
 
   @CreateDateColumn()

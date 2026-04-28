@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react';
 
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { ContentType, Event } from '@muzgram/types';
 import { formatDistanceLabel, formatEventDateLabel } from '@muzgram/utils';
@@ -39,7 +39,7 @@ export const EventCard = memo(function EventCard({ event, onSave, position }: Ev
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.9}
-      className="mx-4 mb-4 bg-surface-DEFAULT rounded-card overflow-hidden border border-surface-border"
+      className="mx-4 mb-3 bg-surface-DEFAULT rounded-card overflow-hidden border border-surface-border"
     >
       {/* Cover image with blurhash placeholder */}
       {event.thumbnailUrl && (
@@ -70,62 +70,90 @@ export const EventCard = memo(function EventCard({ event, onSave, position }: Ev
         </View>
       )}
 
-      {/* Free badge */}
-      {event.isFree && (
-        <View className="absolute top-3 left-3 bg-status-open px-2 py-0.5 rounded-badge">
-          <Text className="text-white text-xs font-display">Free</Text>
-        </View>
-      )}
-
-      <View className="p-4">
-        <View className="flex-row items-start justify-between mb-1">
-          <Text className="text-text-primary text-base font-display flex-1 mr-2" numberOfLines={2}>
-            {event.title}
-          </Text>
+      <View style={{ padding: 12 }}>
+        {/* Top row: Free + tags | save */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexShrink: 1, flexWrap: 'wrap' }}>
+            {event.isFree && (
+              <View style={{ backgroundColor: '#22c55e', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 20 }}>
+                <Text style={{ color: '#fff', fontSize: 10, fontWeight: '700' }}>Free</Text>
+              </View>
+            )}
+            {[...event.tags].sort((a, b) => (a === 'entertainment' ? -1 : b === 'entertainment' ? 1 : 0)).slice(0, 2).map((tag) => {
+              const meta = EVENT_TYPE_META[tag] ?? { icon: '📌', color: '#6b7280', bg: '#6b728020' };
+              return (
+                <View key={tag} style={[styles.typeBadge, { backgroundColor: meta.bg }]}>
+                  <Text style={styles.typeBadgeIcon}>{meta.icon}</Text>
+                  <Text style={[styles.typeBadgeText, { color: meta.color }]}>
+                    {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
           <TouchableOpacity
             onPress={() => onSave?.(ContentType.EVENT, event.id)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={{ marginLeft: 8 }}
           >
-            <Text className={`text-xl ${event.isSaved ? 'text-brand-gold' : 'text-text-muted'}`}>
+            <Text style={{ fontSize: 18, color: event.isSaved ? '#D4A853' : '#555' }}>
               {event.isSaved ? '♥' : '♡'}
             </Text>
           </TouchableOpacity>
         </View>
 
+        {/* Title */}
+        <Text style={{ color: '#F5F5F5', fontSize: 15, fontWeight: '700', marginBottom: 4 }} numberOfLines={2}>
+          {event.title}
+        </Text>
+
         {/* Date */}
-        <Text className="text-brand-gold text-sm font-display mb-1">{dateLabel}</Text>
+        <Text style={{ color: '#D4A853', fontSize: 12, fontWeight: '600', marginBottom: 3 }}>{dateLabel}</Text>
 
         {/* Location */}
-        {!event.isOnline && (
-          <Text className="text-text-secondary text-xs mb-1" numberOfLines={1}>
+        {!event.isOnline ? (
+          <Text style={{ color: '#A0A0A0', fontSize: 11 }} numberOfLines={1}>
             📍 {event.address}{distanceLabel ? ` · ${distanceLabel}` : ''}
           </Text>
-        )}
-        {event.isOnline && (
-          <Text className="text-text-secondary text-xs mb-1">🔗 Online event</Text>
+        ) : (
+          <Text style={{ color: '#A0A0A0', fontSize: 11 }}>🔗 Online event</Text>
         )}
 
         {/* Organizer */}
         {event.organizer && (
-          <View className="flex-row items-center gap-1 mt-1">
-            <Text className="text-text-muted text-xs">By {event.organizer.name}</Text>
-            {isVerifiedOrganizer && (
-              <Text className="text-brand-gold text-xs">✓</Text>
-            )}
-          </View>
-        )}
-
-        {/* Tags */}
-        {event.tags.length > 0 && (
-          <View className="flex-row flex-wrap gap-1 mt-2">
-            {event.tags.slice(0, 3).map((tag) => (
-              <View key={tag} className="bg-background-elevated px-2 py-0.5 rounded-badge">
-                <Text className="text-text-muted text-xs">{tag}</Text>
-              </View>
-            ))}
-          </View>
+          <Text style={{ color: '#666', fontSize: 11, marginTop: 3 }} numberOfLines={1}>
+            By {event.organizer.name}{isVerifiedOrganizer ? ' ✓' : ''}
+          </Text>
         )}
       </View>
     </TouchableOpacity>
   );
+});
+
+const EVENT_TYPE_META: Record<string, { icon: string; color: string; bg: string }> = {
+  islamic:       { icon: '🕌', color: '#22c55e', bg: '#22c55e18' },
+  ramadan:       { icon: '🌙', color: '#a78bfa', bg: '#a78bfa18' },
+  eid:           { icon: '🎊', color: '#D4A853', bg: '#D4A85320' },
+  networking:    { icon: '🤝', color: '#3b82f6', bg: '#3b82f618' },
+  entertainment: { icon: '🎵', color: '#ec4899', bg: '#ec489918' },
+  sports:        { icon: '⚽', color: '#f97316', bg: '#f9731618' },
+  food:          { icon: '🍽', color: '#f59e0b', bg: '#f59e0b18' },
+  charity:       { icon: '💝', color: '#ef4444', bg: '#ef444418' },
+  family:        { icon: '👨‍👩‍👧', color: '#14b8a6', bg: '#14b8a618' },
+  education:     { icon: '🎓', color: '#6366f1', bg: '#6366f118' },
+  arts:          { icon: '🎨', color: '#c084fc', bg: '#c084fc18' },
+  community:     { icon: '🌍', color: '#94a3b8', bg: '#94a3b818' },
+};
+
+const styles = StyleSheet.create({
+  typeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 20,
+  },
+  typeBadgeIcon: { fontSize: 10 },
+  typeBadgeText: { fontSize: 10, fontWeight: '600' },
 });

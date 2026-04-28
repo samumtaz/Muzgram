@@ -96,4 +96,15 @@ export class FeedController {
       query.radiusKm ?? FEED_DEFAULT_RADIUS_KM,
     );
   }
+
+  @Public()
+  @Get('trending')
+  @ApiOperation({ summary: 'Get trending listings and events this week' })
+  getTrending(@Query() query: MapPinsQueryDto) {
+    return this.feedService.getTrending(
+      query.lat,
+      query.lng,
+      query.radiusKm ?? 40,
+    );
+  }
 }
