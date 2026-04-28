@@ -3,6 +3,7 @@ name: Mobile — EAS Build
 on:
   push:
     branches:
+      - main
       - release/**
   workflow_dispatch:
 
