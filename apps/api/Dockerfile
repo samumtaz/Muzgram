@@ -27,21 +27,18 @@ RUN pnpm --filter @muzgram/api run build && find /app/apps/api/dist -name "*.js"
 FROM node:20-alpine
 WORKDIR /app
 
-RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@9.14.0 --activate
-
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
-COPY packages/types/package.json ./packages/types/
-COPY packages/utils/package.json ./packages/utils/
-COPY packages/constants/package.json ./packages/constants/
-COPY apps/api/package.json ./apps/api/
-
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy compiled output from builder
+# Copy node_modules from builder (avoids workspace symlink resolution issues)
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages/types/dist ./packages/types/dist
 COPY --from=builder /app/packages/constants/dist ./packages/constants/dist
 COPY --from=builder /app/packages/utils/dist ./packages/utils/dist
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
+
+# Package manifests needed for module resolution
+COPY packages/types/package.json ./packages/types/
+COPY packages/utils/package.json ./packages/utils/
+COPY packages/constants/package.json ./packages/constants/
+COPY apps/api/package.json ./apps/api/
 
 EXPOSE 3000
 CMD ["node", "apps/api/dist/apps/api/src/main"]
